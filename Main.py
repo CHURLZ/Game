@@ -34,30 +34,26 @@ while True:
 	#player.update()
 
 	for event in pygame.event.get():  
-            if event.type == pygame.QUIT:  
-                pygame.quit()  
-                sys.exit() 
+			if event.type == pygame.QUIT:  
+				pygame.quit()  
+				sys.exit() 	
 
 	#COLLISION 
 
 	#COLLISION 
 
+
 	#MISC
 
 	#MISC
+
 
 	#DRAW
 	screen.fill((255, 255, 255))
 	BaseClass.allSprites.draw(screen)
 	pygame.display.flip()	
-
-
-
-	#BaseClass.allSprites.update()
 	#DRAW
 
 	#LOGIC
 	clock.tick(FPS)
 	#LOGIC
-
-
