@@ -5,7 +5,8 @@ TILE_SIZE = 30
 
 def loadMap(matrix):
 	print "# Loading map from file..."
-	file = open('map/newMap.txt', 'r')
+	fileName = 'map/newMap.txt'
+	file = open(fileName, 'r')
 	for i, line in enumerate(file):
 		List = line.split()
 		for j, letter in enumerate(List):
@@ -19,11 +20,7 @@ def generateMap(matrix):
 	for i, line in enumerate(matrix):
 		for j, item in enumerate(matrix[i]):
 			if(matrix[i][j] == 1):
-<<<<<<< HEAD
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/terrain.jpg", True)
-=======
 				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BlueFloor.png", True)
->>>>>>> af78ab8171c7b4d684814aa94d33c4983251d592
 			if(matrix[i][j] == 2):
 				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallVertical.png", False)
 			if(matrix[i][j] == 3):

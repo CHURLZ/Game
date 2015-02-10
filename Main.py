@@ -13,10 +13,6 @@ fivesecondinterval = FPS * 5
 totalframes = 0
 #SETTINGS
 
-#UNITS
-#player = Player(100, 0, 23, 30, "img/player/player.png")
-#UNITS
-
 #TERRAIN
 TILE_SIZE = 30
 matrix = [[0 for i in xrange((SCREEN_WIDTH+TILE_SIZE) / TILE_SIZE)] for i in xrange((SCREEN_HEIGHT+TILE_SIZE) / TILE_SIZE)]
@@ -24,8 +20,13 @@ matrix = loadMap(matrix)
 generateMap(matrix)
 #TERRAIN
 
-x, y = 0, 0
+#MISC
+x, y = 0, 0 #Mouse coordinates
+#MISC
+
+#UNITS
 c = Customer(100, 0, 30, 30, "img/customer/coin.png")
+#UNITS
 # ---------- MAIN GAME LOOP -------------
 while True:
 	
@@ -41,14 +42,18 @@ while True:
 
 			if event.type == pygame.MOUSEBUTTONUP:
 				x, y = pygame.mouse.get_pos()
-				print "navigate customer to pos"
-				c.setTarget(x, y)
+				for obj in Terrain.List:
+					if Collision.contains(obj, x, y):
+						print "navigate customer to pos"
+						print obj.walkable
+						c.setTarget(obj)
 				#customer navigate to pos
 
 	#LOGIC
 	#for c in Customer.List:
 		#c.motion()
 		#c.update()
+	#LOGIC
 
 	#COLLISION 
 

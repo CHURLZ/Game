@@ -1,5 +1,6 @@
 import random, threading
 import pygame, math
+from collision import *
 
 class BaseClass(pygame.sprite.Sprite):
 	foregroundSprites = pygame.sprite.OrderedUpdates()
@@ -34,18 +35,28 @@ class Customer(BaseClass):
 		self.movementSpeed, self.xDir, self.yDir = 3, 1, 1
 		self.targetX, self.targetY = 0, 0
 		self.targetSet = False
+		self.currentTile  = self.rect
+		self.currentTile = self.getCurrentTile()
 		Customer.List.add(self)
+
+	def getCurrentTile(self):
+		for obj in Terrain.List:
+			if Collision.contains(obj, self.rect.x, self.rect.y):
+				return obj
 
 	def setTarget(self, x, y):
 		self.targetX = x
 		self.targetY = y
 		self.targetSet = True
 
+	def setTarget(self, obj):
+		self.targetX = obj.rect.x
+		self.targetY = obj.rect.y
+		self.targetSet = True
+
 	def motion(self):
-		#CONTROLLERS
 		self.rect.x += self.xSpeed
 		self.rect.y += self.ySpeed
-		#CONTROLLERS
 
 	def animate(self, state):
 		flipped = ""
@@ -69,20 +80,16 @@ class Customer(BaseClass):
 	def navigate(self, x, y):
 		targetXReached, targetYReached = False, False
 		if self.rect.x < x:
-			print "PLAYER: moving right" 
 			self.xSpeed = self.movementSpeed
 		elif self.rect.x > x:
-			print "PLAYER: moving left" 
 			self.xSpeed = -self.movementSpeed
 		else:
 			targetXReached = True
 			self.xSpeed = 0
 
 		if self.rect.y < y:
-			print "PLAYER: moving up" 
 			self.ySpeed = self.movementSpeed
 		elif self.rect.y > y:
-			print "PLAYER: moving down" 
 			self.ySpeed = -self.movementSpeed
 		else:
 			targetYReached = True
