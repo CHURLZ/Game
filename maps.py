@@ -5,7 +5,8 @@ TILE_SIZE = 30
 
 def loadMap(matrix):
 	print "# Loading map from file..."
-	file = open('map/newMap.txt', 'r')
+	fileName = 'map/newMap.txt'
+	file = open(fileName, 'r')
 	for i, line in enumerate(file):
 		List = line.split()
 		for j, letter in enumerate(List):
