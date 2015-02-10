@@ -9,6 +9,7 @@ class BaseClass(pygame.sprite.Sprite):
 	FOREGROUND = 0;
 	def __init__(self, x, y, width, height, image_string, layer):
 		pygame.sprite.Sprite.__init__(self)
+
 		if layer == BaseClass.BACKGROUND:
 			BaseClass.backgroundSprites.add(self)
 		if layer == BaseClass.FOREGROUND:
