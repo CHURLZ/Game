@@ -1,0 +1,6 @@
+; Hexadecimal format: aarrggbb
+FF7D5437
+FF3D291B
+FFBD7E53
+FFFFAA70
+FFA36D48
