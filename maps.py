@@ -25,6 +25,18 @@ def generateMap(matrix):
 			if(matrix[i][j] == 3):
 				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallHorizontal.png", False)
 			if(matrix[i][j] == 4):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallLeftCorner.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallTopLeftCorner.png", False)
 			if(matrix[i][j] == 5):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallRightCorner.png", False)	
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallTopRightCorner.png", False)
+			if(matrix[i][j] == 6):
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallHorizontalBottomLeftCorner.png", False)
+			if(matrix[i][j] == 7):
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallHorizontalBottomRightCorner.png", False)
+			if(matrix[i][j] == 8):
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallHorizontalLeftEnd.png", False)
+			if(matrix[i][j] == 9):
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallHorizontalRightEnd.png", False)
+			if(matrix[i][j] == 10):
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallVerticalTopEnd.png", False)
+			if(matrix[i][j] == 11):
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallVerticalBottomEnd.png", False)
