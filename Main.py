@@ -24,17 +24,15 @@ matrix = loadMap(matrix)
 generateMap(matrix)
 #TERRAIN
 
-
+x, y = 0, 0
+c = Customer(100, 0, 30, 30, "img/customer/coin.png")
 # ---------- MAIN GAME LOOP -------------
 while True:
-	#process(player)
 	
-	totalframes += 1
-	#player.motion()
-	#player.update()
-	x, y = 0, 0
-
-	c = Customer(100, 0, 30, 30, "img/customer/coin.png")
+	c.motion()
+	c.update()
+	
+	totalframes += 1	
 
 	for event in pygame.event.get():  
 			if event.type == pygame.QUIT:  
@@ -44,14 +42,13 @@ while True:
 			if event.type == pygame.MOUSEBUTTONUP:
 				x, y = pygame.mouse.get_pos()
 				print "navigate customer to pos"
+				c.setTarget(x, y)
 				#customer navigate to pos
 
 	#LOGIC
-	for c in Customer.List:
-		c.motion()
-		c.update()
-		c.navigate(x, y)
-
+	#for c in Customer.List:
+		#c.motion()
+		#c.update()
 
 	#COLLISION 
 
@@ -65,7 +62,9 @@ while True:
 
 	#DRAW
 	screen.fill((255, 255, 255))
-	BaseClass.allSprites.draw(screen)
+	BaseClass.backgroundSprites.draw(screen)
+	pygame.display.update()	
+	BaseClass.foregroundSprites.draw(screen)
 	pygame.display.flip()	
 	#DRAW
 
