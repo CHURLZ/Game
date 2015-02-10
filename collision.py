@@ -16,7 +16,6 @@ class Collision:
 
 	@staticmethod	
 	def contains(objA, x, y):
-
 		if x > objA.rect.x + objA.width:
 			return False
 		if x < objA.rect.x:
