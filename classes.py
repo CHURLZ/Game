@@ -47,15 +47,9 @@ class Customer(BaseClass):
 		flipped = ""
 		if self.xDir == 1:
 			flipped ="_flipped"
-		if self.animCounter % 10 == 0:
-			if self.state == BaseClass.STATE_WALKING:
-				self.image = pygame.image.load("img/player/player"+flipped+".png")
-			
-			if self.state == BaseClass.STATE_STANDING:
-				self.image = pygame.image.load("img/player/player"+flipped+".png")
 
 	def update(self):
-		self.animate(self.state)
+		self.animate(0)
 		if self.xSpeed < 0:
 			self.xDir = -1
 		elif self.xSpeed > 0:
@@ -67,13 +61,25 @@ class Customer(BaseClass):
 
 	def navigate(self, rect):
 		if self.rect.x < rect.x:
-			xSpeed = -movementSpeed
+			self.xSpeed = -self.movementSpeed
 		elif self.rect.x > rect.x:
-			xSpeed = movementSpeed
+			self.xSpeed = self.movementSpeed
 			pass
 		if self.rect.y < rect.y:
-			ySpeed = -movementSpeed
+			self.ySpeed = -self.movementSpeed
 		elif self.rect.y > rect.y:
-			ySpeed = movementSpeed
+			self.ySpeed = self.movementSpeed
+			pass
+
+	def navigate(self, x, y):
+		if self.rect.x < x:
+			self.xSpeed = -self.movementSpeed
+		elif self.rect.x > x:
+			self.xSpeed = self.movementSpeed
+			pass
+		if self.rect.y < y:
+			self.ySpeed = -self.movementSpeed
+		elif self.rect.y > y:
+			self.ySpeed = self.movementSpeed
 			pass
 

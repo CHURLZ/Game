@@ -28,15 +28,30 @@ generateMap(matrix)
 # ---------- MAIN GAME LOOP -------------
 while True:
 	#process(player)
-	#LOGIC
+	
 	totalframes += 1
 	#player.motion()
 	#player.update()
+	x, y = 0, 0
+
+	c = Customer(100, 0, 30, 30, "img/customer/coin.png")
 
 	for event in pygame.event.get():  
 			if event.type == pygame.QUIT:  
 				pygame.quit()  
 				sys.exit() 	
+
+			if event.type == pygame.MOUSEBUTTONUP:
+				x, y = pygame.mouse.get_pos()
+				print "navigate customer to pos"
+				#customer navigate to pos
+
+	#LOGIC
+	for c in Customer.List:
+		c.motion()
+		c.update()
+		c.navigate(x, y)
+
 
 	#COLLISION 
 
