@@ -27,3 +27,9 @@ class Collision:
 			return False
 
 		return True
+
+	@staticmethod	
+	def getTileAt(self, x, y):
+		for obj in Terrain.List:
+			if Collision.contains(obj, x, y):
+				return obj

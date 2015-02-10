@@ -36,6 +36,7 @@ class Customer(BaseClass):
 		self.movementSpeed, self.xDir, self.yDir = 3, 1, 1
 		self.targetX, self.targetY = 0, 0
 		self.targetSet = False
+		self.targetTile = self.rect
 		self.currentTile  = self.rect
 		self.currentTile = self.getCurrentTile()
 		Customer.List.add(self)
@@ -51,6 +52,7 @@ class Customer(BaseClass):
 		self.targetSet = True
 
 	def setTarget(self, obj):
+		self.targetTile = obj
 		self.targetX = obj.rect.x
 		self.targetY = obj.rect.y
 		self.targetSet = True
