@@ -71,7 +71,6 @@ class Customer(BaseClass):
 		self.animate(0)
 		if(self.targetSet):
 			self.navigate(self.targetX, self.targetY)
-			print AI.calculatePath(self, self.targetX, self.targetY, Terrain.List)
 
 		if self.xSpeed < 0:
 			self.xDir = -1

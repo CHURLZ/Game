@@ -44,10 +44,7 @@ while True:
 				x, y = pygame.mouse.get_pos()
 				for obj in Terrain.List:
 					if Collision.contains(obj, x, y):
-						print "navigate customer to pos"
-						print obj.walkable
 						c.setTarget(obj)
-				#customer navigate to pos
 
 	#LOGIC
 	#for c in Customer.List:
