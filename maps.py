@@ -41,3 +41,5 @@ def generateMap(matrix):
 				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallVerticalTopEnd.png", False)
 			if(matrix[i][j] == 11):
 				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallVerticalBottomEnd.png", False)
+			if(matrix[i][j] == 12):
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallIntersect.png", False)
