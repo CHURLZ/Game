@@ -16,7 +16,6 @@ class Collision:
 
 	@staticmethod	
 	def contains(objA, x, y):
-
 		if x > objA.rect.x + objA.width:
 			return False
 		if x < objA.rect.x:
@@ -27,3 +26,9 @@ class Collision:
 			return False
 
 		return True
+
+	@staticmethod	
+	def getTileAt(self, x, y):
+		for obj in Terrain.List:
+			if Collision.contains(obj, x, y):
+				return obj
