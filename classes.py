@@ -1,6 +1,7 @@
 import random, threading
 import pygame, math
 from collision import *
+from ai import *
 
 class BaseClass(pygame.sprite.Sprite):
 	foregroundSprites = pygame.sprite.OrderedUpdates()
@@ -70,6 +71,7 @@ class Customer(BaseClass):
 		self.animate(0)
 		if(self.targetSet):
 			self.navigate(self.targetX, self.targetY)
+			print AI.calculatePath(self, self.targetX, self.targetY, Terrain.List)
 
 		if self.xSpeed < 0:
 			self.xDir = -1
