@@ -1,6 +1,7 @@
 import random, threading
 import pygame, math
 from collision import *
+from ai import *
 
 class BaseClass(pygame.sprite.Sprite):
 	foregroundSprites = pygame.sprite.OrderedUpdates()

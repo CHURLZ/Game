@@ -1,5 +1,4 @@
 import math
-
 class Collision:
 	@staticmethod	
 	def collide(objA, objB):
@@ -28,7 +27,7 @@ class Collision:
 		return True
 
 	@staticmethod	
-	def getTileAt(self, x, y):
-		for obj in Terrain.List:
+	def getTileAt(objList, x, y):
+		for obj in objList:
 			if Collision.contains(obj, x, y):
 				return obj
