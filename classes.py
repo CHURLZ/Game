@@ -57,6 +57,7 @@ class Customer(BaseClass):
 		self.targetX = obj.rect.x
 		self.targetY = obj.rect.y
 		self.targetSet = True
+		self.getPath()
 
 	def motion(self):
 		self.rect.x += self.xSpeed
@@ -80,6 +81,10 @@ class Customer(BaseClass):
 			self.yDir = -1
 		elif self.ySpeed > 0:
 			self.yDir = 1
+
+	def getPath(self):
+		self.currentTile = self.getCurrentTile()
+		self.path = AI.calculatePath(self.currentTile, self.targetTile, Terrain.List)
 
 	def navigate(self, x, y):
 		targetXReached, targetYReached = False, False

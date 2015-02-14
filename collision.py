@@ -31,3 +31,4 @@ class Collision:
 		for obj in objList:
 			if Collision.contains(obj, x, y):
 				return obj
+		return None

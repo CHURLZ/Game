@@ -2,44 +2,67 @@ import pygame, math
 from collision import *
 
 class AI:
+	NONE = "none"
 	LEFT = "left"
 	RIGHT = "right"
 	UP = "up"
 	DOWN = "down"
-	openList = []
-	closedList = set()
-	path = []
 
 	@staticmethod
 	def calculatePath(objA, goal, objList):
-		openList = []
-		closedList = set()
-		path = []
+		openList = set()
+		#closedList = set()
+		visited = set()
+		path = set()
+		current = objA
 
-		return r #restructurePath()
+
+		for tile in objList:
+			openList.add(tile)
+
+		path.add(current)
+
+		while openList:
+
+			if current == goal:
+				break
+
+			lowest = None
+			lowestTile = None
+			for next in AI.getNeighbours(current, openList, goal):
+				if next == None:
+					openList.discard(next)
+
+				if(next not in visited and next != None):
+					heuristic = AI.getHeuristic(goal, next)
+					if heuristic < lowest or lowest == None:
+						lowest = heuristic
+						lowestTile = next
+					visited.add(next)
+
+					
+					if next.walkable == False:
+						next.image = pygame.image.load("img/Red.png")
+					else:
+						next.image = pygame.image.load("img/Green.png")
+			current = lowestTile
+			path.add(current)
+		
+		for p in path:
+			p.image = pygame.image.load("img/Path.png")	
+
+		print "JARRO!"
+		return "lol" #restructurePath()
 
 	@staticmethod
-	def checkNeighbours(obj, objList, goal):
-		if obj == None or obj.walkable == False:
-			AI.closedList.add(obj)
-			return 
+	def getNeighbours(obj, objList, goal):
 
-		obj.image = pygame.image.load(green.png)
 		left = AI.getAdjacent(obj, AI.LEFT, objList)
 		right = AI.getAdjacent(obj, AI.RIGHT, objList)
-		up = AI.getAdjacent(obj, AI.UP, objList)
 		down = AI.getAdjacent(obj, AI.DOWN, objList)
+		up = AI.getAdjacent(obj, AI.UP, objList)
 
-
-		checkNeighbours(left, objList, goal)
-		checkNeighbours(right, objList, goal)
-		checkNeighbours(up, objList, goal)
-		checkNeighbours(down, objList, goal)
-
-		#hLeft = AI.getHeuristic(goal, left)
-		#hRight = AI.getHeuristic(goal, right)
-		#hUp = AI.getHeuristic(goal, up)
-		#hDown = AI.getHeuristic(goal, down)
+		return {left, right, down, up}
 
 	@staticmethod
 	def restructurePath():
@@ -49,18 +72,20 @@ class AI:
 	def getHeuristic(goal, tile):
 		x = tile.rect.x - goal.rect.x
 		y = tile.rect.y - goal.rect.y
-		return (int)(math.sqrt((x * x) + (y * y)))
+		return (abs)(x+y)
 
 	@staticmethod
 	def getAdjacent(current, side, objList):
-		
-		if side == AI.LEFT:
-			return Collision.getTileAt(objList, current.rect.x - 2, current.rect.y)		
-		elif side == AI.RIGHT:
-			return Collision.getTileAt(objList, current.rect.x + current.rect.width + 2, current.rect.y)	
-		elif side == AI.UP:
-			return Collision.getTileAt(objList, current.rect.x, current.rect.y - 2)	
-		elif side == AI.DOWN:
-			return Collision.getTileAt(objList, current.rect.x, current.rect.y + current.height + 2)	
-		else:
+		if current == None:
 			return None
+		obj = None
+		if side == AI.LEFT:
+			obj = Collision.getTileAt(objList, current.rect.x - 1, current.rect.y)
+		elif side == AI.RIGHT:
+			obj = Collision.getTileAt(objList, current.rect.x + current.rect.width + 1, current.rect.y)	
+		elif side == AI.UP:
+			obj = Collision.getTileAt(objList, current.rect.x, current.rect.y - 2)	
+		elif side == AI.DOWN:
+			obj = Collision.getTileAt(objList, current.rect.x, current.rect.y + current.height + 2)	
+
+		return obj
