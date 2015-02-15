@@ -1,4 +1,4 @@
-import pygame, math, Queue
+import pygame, math, Queue, time
 from collision import *
 
 class AI:
@@ -10,6 +10,8 @@ class AI:
 
 	@staticmethod
 	def calculatePath(start, goal, objList):
+		startTime = time.clock()
+
  		openList = set()
 
 		frontier = Queue.Queue()
@@ -18,7 +20,7 @@ class AI:
 		visited[start] = None
 
 		for tile in objList:
-			tile.image = pygame.image.load(tile.default_image)
+			#tile.image = pygame.image.load(tile.default_image)
 			if tile.walkable == True:
 				openList.add(tile)
 
@@ -32,12 +34,13 @@ class AI:
 				if next not in visited and next in openList:
 					visited[next] = current
 					frontier.put(next)
-					next.image = pygame.image.load("img/BlueFloorGreenTint.png")
+					#next.image = pygame.image.load("img/BlueFloorGreenTint.png")
 
 		path = AI.reconstructPath(start, goal, visited)
-		for p in path:
-			p.image = pygame.image.load("img/BlueFloorPathTint.png")
-
+		#for p in path:
+		#	p.image = pygame.image.load("img/BlueFloorPathTint.png")
+		stopTime = time.clock()
+		print stopTime - startTime
 		return path
 
 	@staticmethod
