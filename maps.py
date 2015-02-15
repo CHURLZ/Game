@@ -4,8 +4,8 @@ import pygame
 TILE_SIZE = 30
 
 def loadMap(matrix):
-	print "# Loading map from file..."
 	fileName = 'map/newMap.txt'
+	print "# Loading map from file:",fileName
 	file = open(fileName, 'r')
 	for i, line in enumerate(file):
 		List = line.split()
@@ -45,3 +45,10 @@ def generateMap(matrix):
 				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallIntersect.png", False)
 			if(matrix[i][j] == 13):
 				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/WoodenDoors.png", True)
+
+
+
+
+
+
+

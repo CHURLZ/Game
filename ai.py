@@ -26,18 +26,17 @@ class AI:
 			current = frontier.get()
 
 			if current == goal:
-				print "reached!"
 				break
 				
 			for next in AI.getNeighbours(current, objList):
 				if next not in visited and next in openList:
 					visited[next] = current
 					frontier.put(next)
-					next.image = pygame.image.load("img/Green.png")
+					next.image = pygame.image.load("img/BlueFloorGreenTint.png")
 
 		path = AI.reconstructPath(start, goal, visited)
 		for p in path:
-			p.image = pygame.image.load("img/Path.png")
+			p.image = pygame.image.load("img/BlueFloorPathTint.png")
 
 		return path
 
