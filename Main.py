@@ -25,14 +25,12 @@ x, y = 0, 0 #Mouse coordinates
 #MISC
 
 #UNITS
-c = Customer(150, 150, 30, 30, "img/customer/coin.png")
+Customer(150, 150, 30, 30, "img/customer/coin.png")
+Customer(450, 150, 30, 30, "img/customer/coin.png")
+
 #UNITS
 # ---------- MAIN GAME LOOP -------------
 while True:
-	
-	c.motion()
-	c.update()
-	
 	totalframes += 1	
 
 	for event in pygame.event.get():  
@@ -44,12 +42,13 @@ while True:
 				x, y = pygame.mouse.get_pos()
 				for obj in Terrain.List:
 					if Collision.contains(obj, x, y):
-						c.setTarget(obj)
+						for c in Customer.List:
+							c.setTarget(obj)
 
 	#LOGIC
-	#for c in Customer.List:
-		#c.motion()
-		#c.update()
+	for c in Customer.List:
+		c.motion()
+		c.update()
 	#LOGIC
 
 	#COLLISION 
@@ -65,7 +64,7 @@ while True:
 	#DRAW
 	screen.fill((255, 255, 255))
 	BaseClass.backgroundSprites.draw(screen)
-	pygame.display.update()	
+	#pygame.display.update()	
 	BaseClass.foregroundSprites.draw(screen)
 	pygame.display.flip()	
 	#DRAW

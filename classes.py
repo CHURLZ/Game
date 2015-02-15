@@ -71,7 +71,8 @@ class Customer(BaseClass):
 		self.targetTile = obj
 		self.targetX = obj.rect.x # for later
 		self.targetY = obj.rect.y # for later
-
+		if obj.walkable == False:
+			return
 		self.targetSet = True
 		self.path = Queue.Queue()
 		path = self.getPath(self.targetTile)
