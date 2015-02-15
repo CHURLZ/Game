@@ -48,6 +48,9 @@ class Customer(BaseClass):
 	def __init__(self, x, y, width, height, image_string):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.FOREGROUND)
 		self.xSpeed, self.ySpeed = 0, 0
+		self.walkX, self.walkY = 0, 0
+		self.STANDING = 0
+		self.WALKING = 1
 		self.movementSpeed, self.xDir, self.yDir = 3, 1, 1
 		self.targetX, self.targetY = 0, 0
 		self.targetSet = False
@@ -55,11 +58,12 @@ class Customer(BaseClass):
 		self.currentTile = self.getCurrentTile()
 		self.nextTile = None
 		self.path = Queue.Queue()
+		self.state = self.STANDING
 		Customer.List.add(self)
 
 	def getCurrentTile(self):
 		for obj in Terrain.List:
-			if Collision.contains(obj, self.rect.x, self.rect.y):
+			if Collision.contains(obj, self.walkX, self.walkY):
 				return obj
 
 	def setTarget(self, x, y):
@@ -73,6 +77,7 @@ class Customer(BaseClass):
 		self.targetY = obj.rect.y # for later
 		if obj.walkable == False:
 			return
+
 		self.targetSet = True
 		self.path = Queue.Queue()
 		path = self.getPath(self.targetTile)
@@ -86,13 +91,28 @@ class Customer(BaseClass):
 		self.rect.x += self.xSpeed
 		self.rect.y += self.ySpeed
 
-	def animate(self, state):
-		flipped = ""
-		if self.xDir == 1:
-			flipped ="_flipped"
+		self.walkX = self.rect.x + (self.width/2)
+		self.walkY = self.rect.y + self.height
+
+	def animate(self, state):	
+		fileName = "img/customer_1_front.png"
+
+		if state == self.WALKING:
+			fileName = "img/customer_1_side.png"
+			if self.yDir == -1 and abs(self.ySpeed) > abs(self.xSpeed):
+				fileName = "img/customer_1_back.png"
+			self.image = pygame.image.load(fileName)
+			if self.xDir == 1:
+				self.image = pygame.transform.flip(self.image, True, False)
+
+		elif state == self.STANDING:
+			fileName = "img/customer_1_front.png"
+			if self.yDir == -1 :
+				fileName = "img/customer_1_back.png"	
+			self.image = pygame.image.load(fileName)
 
 	def update(self):
-		self.animate(0)
+		self.animate(self.state)
 		if(self.targetSet):
 			self.navigate()
 
@@ -110,28 +130,32 @@ class Customer(BaseClass):
 		return AI.calculatePath(self.currentTile, goal, Terrain.List)
 
 	def navigate(self):
+		self.state = self.WALKING
 		targetXReached, targetYReached = False, False
-		if self.rect.x < self.nextTile.rect.x+(self.nextTile.width/2):
+		if self.walkX < self.nextTile.rect.x+(self.nextTile.width/2):
 			self.xSpeed = self.movementSpeed
-		elif self.rect.x > self.nextTile.rect.x+(self.nextTile.width/2):
+		elif self.walkX > self.nextTile.rect.x+(self.nextTile.width/2):
 			self.xSpeed = -self.movementSpeed
 		else:
 			targetXReached = True
-			self.xSpeed = 0
+			self.xSpeed = 0.1
 
-		if self.rect.y < self.nextTile.rect.y+(self.nextTile.height/2):
+		if self.walkY < self.nextTile.rect.y+(self.nextTile.height/2):
 			self.ySpeed = self.movementSpeed
-		elif self.rect.y > self.nextTile.rect.y+(self.nextTile.height/2):
+		elif self.walkY > self.nextTile.rect.y+(self.nextTile.height/2):
 			self.ySpeed = -self.movementSpeed
 		else:
 			targetYReached = True
-			self.ySpeed = 0
+			self.ySpeed = 0.1
 
 		if targetXReached and targetYReached:
 			if not self.path.empty():
 				self.nextTile = self.path.get()
 			else:
+				self.state = self.STANDING
 				self.targetSet = False
+				self.ySpeed = 0
+				self.xSpeed = 0
 
 
 class Terrain(BaseClass):

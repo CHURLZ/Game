@@ -1,4 +1,4 @@
-import pygame, sys, math
+import pygame, sys, math, random
 from classes import *
 from maps import *
 
@@ -8,7 +8,7 @@ pygame.init()
 
 FULLSCREEN = False
 if FULLSCREEN: 
-	SCREEN_WIDTH, SCREEN_HEIGHT = 1920, 1080
+	SCREEN_WIDTH, SCREEN_HEIGHT = 1280, 800
 	FLAGS = pygame.FULLSCREEN | pygame.DOUBLEBUF
 else: 
 	SCREEN_WIDTH, SCREEN_HEIGHT = 900, 500
@@ -30,12 +30,11 @@ generateMap(matrix)
 #TERRAIN
 
 #MISC
-x, y = 0, 0 #Mouse coordinates
 #MISC
 
 #UNITS
 Customer(150, 150, 30, 30, "img/customer/coin.png")
-Customer(450, 150, 30, 30, "img/customer/coin.png")
+#Customer(450, 150, 30, 30, "img/customer/coin.png")
 
 #UNITS
 # ---------- MAIN GAME LOOP -------------
@@ -47,18 +46,21 @@ while True:
 				pygame.quit()  
 				sys.exit() 	
 
-			if event.type == pygame.MOUSEBUTTONUP:
-				x, y = pygame.mouse.get_pos()
-				for obj in Terrain.List:
-					if Collision.contains(obj, x, y):
-						for c in Customer.List:
-							c.setTarget(obj)
+		#	if event.type == pygame.MOUSEBUTTONUP:
+		#		x, y = pygame.mouse.get_pos()
 
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_ESCAPE:
 					pygame.quit()
 					sys.exit()
 
+	for c in Customer.List:
+		x = (int)(random.random() * SCREEN_WIDTH)
+		y = (int)(random.random() * SCREEN_HEIGHT)
+
+		obj = Collision.getTileAt(Terrain.List, x, y)
+		if c.targetSet == False and obj != None:
+			c.setTarget(obj)
 
 	#LOGIC
 	for c in Customer.List:
@@ -79,7 +81,6 @@ while True:
 	#DRAW
 	screen.fill((255, 255, 255))
 	BaseClass.backgroundSprites.draw(screen)
-	#pygame.display.update()	
 	BaseClass.foregroundSprites.draw(screen)
 	pygame.display.flip()	
 	#DRAW
