@@ -5,8 +5,17 @@ from maps import *
 pygame.init()
 
 # SETTINGS
-SCREEN_WIDTH, SCREEN_HEIGHT = 900, 500
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
+
+FULLSCREEN = False
+if FULLSCREEN: 
+	SCREEN_WIDTH, SCREEN_HEIGHT = 1920, 1080
+	FLAGS = pygame.FULLSCREEN | pygame.DOUBLEBUF
+else: 
+	SCREEN_WIDTH, SCREEN_HEIGHT = 900, 500
+	FLAGS = pygame.DOUBLEBUF
+
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), FLAGS, 32)
+screen.set_alpha(None)
 clock = pygame.time.Clock()
 FPS = 40
 fivesecondinterval = FPS * 5
@@ -44,6 +53,12 @@ while True:
 					if Collision.contains(obj, x, y):
 						for c in Customer.List:
 							c.setTarget(obj)
+
+			if event.type == pygame.KEYUP:
+				if event.key == pygame.K_ESCAPE:
+					pygame.quit()
+					sys.exit()
+
 
 	#LOGIC
 	for c in Customer.List:
