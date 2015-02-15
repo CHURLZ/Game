@@ -1,4 +1,4 @@
-import pygame, math
+import pygame, math, Queue
 from collision import *
 
 class AI:
@@ -9,53 +9,49 @@ class AI:
 	DOWN = "down"
 
 	@staticmethod
-	def calculatePath(objA, goal, objList):
-		openList = set()
-		#closedList = set()
-		visited = set()
-		path = set()
-		current = objA
+	def calculatePath(start, goal, objList):
+ 		openList = set()
 
+		frontier = Queue.Queue()
+		frontier.put(start)
+		visited = {}
+		visited[start] = None
 
 		for tile in objList:
-			openList.add(tile)
+			tile.image = pygame.image.load(tile.default_image)
+			if tile.walkable == True:
+				openList.add(tile)
 
-		path.add(current)
-
-		while openList:
+		while not frontier.empty():
+			current = frontier.get()
 
 			if current == goal:
+				print "reached!"
 				break
+				
+			for next in AI.getNeighbours(current, objList):
+				if next not in visited and next in openList:
+					visited[next] = current
+					frontier.put(next)
+					next.image = pygame.image.load("img/Green.png")
 
-			lowest = None
-			lowestTile = None
-			for next in AI.getNeighbours(current, openList, goal):
-				if next == None:
-					openList.discard(next)
-
-				if(next not in visited and next != None):
-					heuristic = AI.getHeuristic(goal, next)
-					if heuristic < lowest or lowest == None:
-						lowest = heuristic
-						lowestTile = next
-					visited.add(next)
-
-					
-					if next.walkable == False:
-						next.image = pygame.image.load("img/Red.png")
-					else:
-						next.image = pygame.image.load("img/Green.png")
-			current = lowestTile
-			path.add(current)
-		
+		path = AI.reconstructPath(start, goal, visited)
 		for p in path:
-			p.image = pygame.image.load("img/Path.png")	
+			p.image = pygame.image.load("img/Path.png")
 
-		print "JARRO!"
-		return "lol" #restructurePath()
+		return path
 
 	@staticmethod
-	def getNeighbours(obj, objList, goal):
+	def reconstructPath(start, goal, visited):
+		current = goal
+		path = [current]
+		while current != start:
+			current = visited[current]
+			path.append(current)
+		return path
+
+	@staticmethod
+	def getNeighbours(obj, objList):
 
 		left = AI.getAdjacent(obj, AI.LEFT, objList)
 		right = AI.getAdjacent(obj, AI.RIGHT, objList)
@@ -63,10 +59,6 @@ class AI:
 		up = AI.getAdjacent(obj, AI.UP, objList)
 
 		return {left, right, down, up}
-
-	@staticmethod
-	def restructurePath():
-		return path
 	
 	@staticmethod
 	def getHeuristic(goal, tile):
@@ -78,14 +70,15 @@ class AI:
 	def getAdjacent(current, side, objList):
 		if current == None:
 			return None
+
 		obj = None
 		if side == AI.LEFT:
-			obj = Collision.getTileAt(objList, current.rect.x - 1, current.rect.y)
+			obj = Collision.getTileAt(objList, current.rect.x - 1, current.rect.y+1)
 		elif side == AI.RIGHT:
-			obj = Collision.getTileAt(objList, current.rect.x + current.rect.width + 1, current.rect.y)	
+			obj = Collision.getTileAt(objList, current.rect.x + current.rect.width + 1, current.rect.y+1)	
 		elif side == AI.UP:
-			obj = Collision.getTileAt(objList, current.rect.x, current.rect.y - 2)	
+			obj = Collision.getTileAt(objList, current.rect.x + 1, current.rect.y - 1)	
 		elif side == AI.DOWN:
-			obj = Collision.getTileAt(objList, current.rect.x, current.rect.y + current.height + 2)	
+			obj = Collision.getTileAt(objList, current.rect.x + 1, current.rect.y + current.height + 1)	
 
 		return obj

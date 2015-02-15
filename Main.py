@@ -25,7 +25,7 @@ x, y = 0, 0 #Mouse coordinates
 #MISC
 
 #UNITS
-c = Customer(100, 100, 30, 30, "img/customer/coin.png")
+c = Customer(150, 150, 30, 30, "img/customer/coin.png")
 #UNITS
 # ---------- MAIN GAME LOOP -------------
 while True:
@@ -64,8 +64,8 @@ while True:
 
 	#DRAW
 	screen.fill((255, 255, 255))
-	#BaseClass.backgroundSprites.draw(screen)
-	#pygame.display.update()	
+	BaseClass.backgroundSprites.draw(screen)
+	pygame.display.update()	
 	BaseClass.foregroundSprites.draw(screen)
 	pygame.display.flip()	
 	#DRAW
