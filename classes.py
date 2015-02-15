@@ -1,7 +1,21 @@
 import random, threading, Queue
 import pygame, math
+import os
 from collision import *
 from ai import *
+
+WHITE = (255, 255, 255, 255)
+LIGHT_GRAY = (170, 170, 170, 255)
+DARK_GRAY = (85, 85, 85, 255)
+BLACK = (0, 0, 0, 255)
+
+# Utility function to convert hex RGB codes to pygame BGR Color tuples
+def hexToBGR(hex):
+	red = (hex & 0xff0000) >> 16
+	green = (hex & 0x00ff00) >> 8
+	blue = (hex & 0x0000ff)
+
+	return (blue, green, red)
 
 class BaseClass(pygame.sprite.Sprite):
 	foregroundSprites = pygame.sprite.OrderedUpdates()
@@ -121,9 +135,34 @@ class Customer(BaseClass):
 
 class Terrain(BaseClass):
 	List = pygame.sprite.Group()
-	def __init__(self, x, y, width, height, image_string, walkable):
+
+	def __init__(self, x, y, width, height, image_string, walkable, palette=None):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.BACKGROUND)
 		Terrain.List.add(self)
 		self.default_image = image_string
 		self.walkable = walkable
+
+		if palette:
+			for y in range(width):
+				for x in range(height):
+					if self.image.get_at((x, y)) == WHITE:
+						self.image.set_at((x, y), palette[0])
+					elif self.image.get_at((x, y)) == LIGHT_GRAY:
+						self.image.set_at((x, y), palette[1])
+					elif self.image.get_at((x, y)) == DARK_GRAY:
+						self.image.set_at((x, y), palette[2])
+					elif self.image.get_at((x, y)) == BLACK:
+						self.image.set_at((x, y), palette[3])
+
+
+class BlueFloor(Terrain):
+	def __init__(self, x, y):
+		width = 30
+		height = 30
+		image_string = os.path.join("img", "GrayScaleFloor.png")
+
+		# RGB values are in reverse order, so (Blue, Green, Red)
+		palette = [hexToBGR(0x8EAEE0), hexToBGR(0x5D7394), hexToBGR(0x5D7394), hexToBGR(0x354154)]
+
+		Terrain.__init__(self, x, y, width, height, image_string, True, palette)
 

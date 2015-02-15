@@ -1,4 +1,4 @@
-from classes import Terrain
+from classes import Terrain, BlueFloor
 import pygame
 
 TILE_SIZE = 30
@@ -20,7 +20,8 @@ def generateMap(matrix):
 	for i, line in enumerate(matrix):
 		for j, item in enumerate(matrix[i]):
 			if(matrix[i][j] == 1):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BlueFloor.png", True)
+				t = BlueFloor((j * TILE_SIZE), i * TILE_SIZE)
+				# t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BlueFloor.png", True)
 			if(matrix[i][j] == 2):
 				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallVertical.png", False)
 			if(matrix[i][j] == 3):
