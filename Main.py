@@ -6,16 +6,10 @@ pygame.init()
 
 # SETTINGS
 
-<<<<<<< HEAD
 FULLSCREEN = False
-if FULLSCREEN: 
-	SCREEN_WIDTH, SCREEN_HEIGHT = 1280, 800
-=======
-FULLSCREEN = True
 if FULLSCREEN:
 	screenInfo = pygame.display.Info()
 	SCREEN_WIDTH, SCREEN_HEIGHT = screenInfo.current_w, screenInfo.current_h
->>>>>>> 20f245b231121f29a5e1a438bf43731277d30c94
 	FLAGS = pygame.FULLSCREEN | pygame.DOUBLEBUF
 else: 
 	SCREEN_WIDTH, SCREEN_HEIGHT = 900, 500
@@ -40,8 +34,16 @@ generateMap(matrix)
 #MISC
 
 #UNITS
-Customer(150, 150, 30, 30, "img/customer/coin.png")
-#Customer(450, 150, 30, 30, "img/customer/coin.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+
 
 #UNITS
 # ---------- MAIN GAME LOOP -------------

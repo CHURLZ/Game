@@ -48,13 +48,13 @@ class Customer(BaseClass):
 	def __init__(self, x, y, width, height, image_string):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.FOREGROUND)
 		self.xSpeed, self.ySpeed = 0, 0
-		self.walkX, self.walkY = 0, 0
+		self.walkX, self.walkY = self.rect.x, self.rect.y
 		self.STANDING = 0
 		self.WALKING = 1
 		self.movementSpeed, self.xDir, self.yDir = 3, 1, 1
 		self.targetX, self.targetY = 0, 0
 		self.targetSet = False
-		self.targetTile = self.rect
+		self.targetTile = None
 		self.currentTile = self.getCurrentTile()
 		self.nextTile = None
 		self.path = Queue.Queue()
@@ -75,6 +75,7 @@ class Customer(BaseClass):
 		self.targetTile = obj
 		self.targetX = obj.rect.x # for later
 		self.targetY = obj.rect.y # for later
+
 		if obj.walkable == False:
 			return
 
@@ -95,20 +96,20 @@ class Customer(BaseClass):
 		self.walkY = self.rect.y + self.height
 
 	def animate(self, state):	
-		fileName = "img/customer_1_front.png"
+		fileName = "img/customer/customer_1_front.png"
 
 		if state == self.WALKING:
-			fileName = "img/customer_1_side.png"
-			if self.yDir == -1 and abs(self.ySpeed) > abs(self.xSpeed):
-				fileName = "img/customer_1_back.png"
+			fileName = "img/customer/customer_1_side.png"
+			if self.yDir == -1 and abs(self.ySpeed) > 0:
+				fileName = "img/customer/customer_1_back.png"
 			self.image = pygame.image.load(fileName)
 			if self.xDir == 1:
 				self.image = pygame.transform.flip(self.image, True, False)
 
 		elif state == self.STANDING:
-			fileName = "img/customer_1_front.png"
+			fileName = "img/customer/customer_1_front.png"
 			if self.yDir == -1 :
-				fileName = "img/customer_1_back.png"	
+				fileName = "img/customer/customer_1_back.png"	
 			self.image = pygame.image.load(fileName)
 
 	def update(self):
@@ -138,7 +139,7 @@ class Customer(BaseClass):
 			self.xSpeed = -self.movementSpeed
 		else:
 			targetXReached = True
-			self.xSpeed = 0.1
+			self.xSpeed = 0
 
 		if self.walkY < self.nextTile.rect.y+(self.nextTile.height/2):
 			self.ySpeed = self.movementSpeed
@@ -146,7 +147,7 @@ class Customer(BaseClass):
 			self.ySpeed = -self.movementSpeed
 		else:
 			targetYReached = True
-			self.ySpeed = 0.1
+			self.ySpeed = 0
 
 		if targetXReached and targetYReached:
 			if not self.path.empty():
@@ -154,9 +155,6 @@ class Customer(BaseClass):
 			else:
 				self.state = self.STANDING
 				self.targetSet = False
-				self.ySpeed = 0
-				self.xSpeed = 0
-
 
 class Terrain(BaseClass):
 	List = pygame.sprite.Group()
