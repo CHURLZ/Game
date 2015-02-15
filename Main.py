@@ -6,9 +6,10 @@ pygame.init()
 
 # SETTINGS
 
-FULLSCREEN = False
-if FULLSCREEN: 
-	SCREEN_WIDTH, SCREEN_HEIGHT = 1920, 1080
+FULLSCREEN = True
+if FULLSCREEN:
+	screenInfo = pygame.display.Info()
+	SCREEN_WIDTH, SCREEN_HEIGHT = screenInfo.current_w, screenInfo.current_h
 	FLAGS = pygame.FULLSCREEN | pygame.DOUBLEBUF
 else: 
 	SCREEN_WIDTH, SCREEN_HEIGHT = 900, 500
