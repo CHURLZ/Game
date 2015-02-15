@@ -1,4 +1,4 @@
-import random, threading
+import random, threading, Queue
 import pygame, math
 from collision import *
 from ai import *
@@ -7,7 +7,7 @@ class BaseClass(pygame.sprite.Sprite):
 	foregroundSprites = pygame.sprite.OrderedUpdates()
 	backgroundSprites = pygame.sprite.OrderedUpdates()
 	BACKGROUND = 0;
-	FOREGROUND = 0;
+	FOREGROUND = 1;
 	def __init__(self, x, y, width, height, image_string, layer):
 		pygame.sprite.Sprite.__init__(self)
 
@@ -38,8 +38,9 @@ class Customer(BaseClass):
 		self.targetX, self.targetY = 0, 0
 		self.targetSet = False
 		self.targetTile = self.rect
-		self.currentTile  = self.rect
 		self.currentTile = self.getCurrentTile()
+		self.nextTile = None
+		self.path = Queue.Queue()
 		Customer.List.add(self)
 
 	def getCurrentTile(self):
@@ -54,10 +55,17 @@ class Customer(BaseClass):
 
 	def setTarget(self, obj):
 		self.targetTile = obj
-		self.targetX = obj.rect.x
-		self.targetY = obj.rect.y
+		self.targetX = obj.rect.x # for later
+		self.targetY = obj.rect.y # for later
+
 		self.targetSet = True
-		self.getPath()
+		self.path = Queue.Queue()
+		path = self.getPath(self.targetTile)
+		path.reverse()
+		for tile in path:
+			self.path.put(tile)
+
+		self.nextTile = self.path.get()
 
 	def motion(self):
 		self.rect.x += self.xSpeed
@@ -71,7 +79,7 @@ class Customer(BaseClass):
 	def update(self):
 		self.animate(0)
 		if(self.targetSet):
-			self.navigate(self.targetX, self.targetY)
+			self.navigate()
 
 		if self.xSpeed < 0:
 			self.xDir = -1
@@ -82,40 +90,40 @@ class Customer(BaseClass):
 		elif self.ySpeed > 0:
 			self.yDir = 1
 
-	def getPath(self):
+	def getPath(self, goal):
 		self.currentTile = self.getCurrentTile()
-		self.path = AI.calculatePath(self.currentTile, self.targetTile, Terrain.List)
+		return AI.calculatePath(self.currentTile, goal, Terrain.List)
 
-	def navigate(self, x, y):
+	def navigate(self):
 		targetXReached, targetYReached = False, False
-		if self.rect.x < x:
+		if self.rect.x < self.nextTile.rect.x+(self.nextTile.width/2):
 			self.xSpeed = self.movementSpeed
-		elif self.rect.x > x:
+		elif self.rect.x > self.nextTile.rect.x+(self.nextTile.width/2):
 			self.xSpeed = -self.movementSpeed
 		else:
 			targetXReached = True
 			self.xSpeed = 0
 
-		if self.rect.y < y:
+		if self.rect.y < self.nextTile.rect.y+(self.nextTile.height/2):
 			self.ySpeed = self.movementSpeed
-		elif self.rect.y > y:
+		elif self.rect.y > self.nextTile.rect.y+(self.nextTile.height/2):
 			self.ySpeed = -self.movementSpeed
 		else:
 			targetYReached = True
 			self.ySpeed = 0
 
-		if abs(self.rect.x - x) < self.movementSpeed: 
-			self.xSpeed = 0
-		if abs(self.rect.y - y) < self.movementSpeed: 
-			self.ySpeed = 0
-			
 		if targetXReached and targetYReached:
-			targetSet = False
+			if not self.path.empty():
+				self.nextTile = self.path.get()
+			else:
+				self.targetSet = False
+
 
 class Terrain(BaseClass):
 	List = pygame.sprite.Group()
 	def __init__(self, x, y, width, height, image_string, walkable):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.BACKGROUND)
 		Terrain.List.add(self)
+		self.default_image = image_string
 		self.walkable = walkable
 
