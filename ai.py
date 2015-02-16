@@ -1,14 +1,9 @@
-
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import pygame, math, time
 import pygame, math, Queue, time
 from collision import *
 
 import heapq
 import collections
-
 
 # Wrapper for deque class
 class Queue:
@@ -36,7 +31,6 @@ class PriorityQueue:
 
 	def get(self):
 		return heapq.heappop(self.elements)[1]
-
 
 class AI:
 	total = 0
@@ -71,7 +65,7 @@ class AI:
 		AI.total += (time.clock() * 1000) - startTime
 		AI.count += 1
 
-		print "Average time: " + str(AI.total / AI.count) + "ms"
+		#print "Average time: " + str(AI.total / AI.count) + "ms"
 
 		return came_from, cost_so_far
 

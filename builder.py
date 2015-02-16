@@ -53,7 +53,6 @@ class builder:
 
 	@staticmethod
 	def getNeighbours(obj, objList):
-
 		left = builder.getAdjacent(obj, builder.LEFT, objList)
 		right = builder.getAdjacent(obj, builder.RIGHT, objList)
 		down = builder.getAdjacent(obj, builder.DOWN, objList)
