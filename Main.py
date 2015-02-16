@@ -14,7 +14,7 @@ if FULLSCREEN:
 	SCREEN_WIDTH, SCREEN_HEIGHT = screenInfo.current_w, screenInfo.current_h
 	FLAGS = pygame.FULLSCREEN | pygame.DOUBLEBUF
 else: 
-	SCREEN_WIDTH, SCREEN_HEIGHT = 900, 500
+	SCREEN_WIDTH, SCREEN_HEIGHT = 900, 600
 	FLAGS = pygame.DOUBLEBUF
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), FLAGS, 32)
@@ -27,8 +27,11 @@ totalFrames = 0
 
 #TERRAIN
 TILE_SIZE = 30
-matrix = [[0 for i in xrange((SCREEN_WIDTH+TILE_SIZE) / TILE_SIZE)] for i in xrange((SCREEN_HEIGHT+TILE_SIZE) / TILE_SIZE)]
-matrix = loadMap(matrix)
+TILES_WIDTH = 30
+TILES_HEIGHT = 25
+matrix = [[0 for i in xrange(TILES_WIDTH)] for i in xrange(TILES_HEIGHT)]
+# matrix = loadMap(matrix)
+matrix = createMap(matrix)
 generateMap(matrix)
 #TERRAIN
 

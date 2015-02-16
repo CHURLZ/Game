@@ -14,6 +14,19 @@ def loadMap(matrix):
 				matrix[i][j] = int(letter)
 	file.close()
 	print "# Map loaded."
+
+	return matrix
+
+def createMap(matrix):
+	print len(matrix)
+	print len(matrix[0])
+	for i in range(len(matrix)):
+		for j in range(len(matrix[i])):
+			if i == 0 or i == len(matrix) - 1 or j == 0 or j == len(matrix[i]) - 1:
+				matrix[i][j] = 3
+			else:
+				matrix[i][j] = 1
+
 	return matrix
 
 def generateMap(matrix):
@@ -57,6 +70,7 @@ class Grid(object):
 		self.width = len(matrix[0]) - matrix[0].count(0)
 		self.height = len(matrix) - 1
 		self.walls = []
+		self.grid = [[0 for i in range(self.width)] for i in range(self.height)]
 
 		for y, l in enumerate(matrix):
 			for x, element in enumerate(l):
@@ -71,6 +85,9 @@ class Grid(object):
 				y = tile.rect.y / 30
 
 				self.walls.append((x, y))
+
+	# def orientWalls():
+
 
 
 	def in_bounds(self, id):
