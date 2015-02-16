@@ -168,6 +168,9 @@ class Customer(BaseClass):
 
 		self.targetSet = True
 		self.path = self.getPath(self.targetTile, grid)
+		if self.path == None:
+			self.targetSet = False
+			return 
 
 		# path.reverse()
 		# for tile in path:

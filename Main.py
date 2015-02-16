@@ -1,5 +1,6 @@
 import pygame, sys, math, random
 from classes import *
+from gui import *
 from maps import *
 from builder import *
 from ai import AI
@@ -51,6 +52,8 @@ for i in xrange(1, 2):
 
 Truck(1920, 495, 60, 30, "img/truck.png")
 
+panel = ActionPanel(0, 10, 60, 400, "img/gui/gui_action_panel.png")
+
 # UNITS
 
 # ---------- MAIN GAME LOOP -------------
@@ -66,6 +69,7 @@ while True:
 				initBuild = True
 				x, y = pygame.mouse.get_pos()
 				buildFrom = Collision.getObjectAt(Terrain.List, x, y)
+				buildFrom.image = pygame.image.load("img/walls/BlueFloorGreenTint.png")
 
 			if event.type == pygame.MOUSEBUTTONUP:
 				x, y = pygame.mouse.get_pos()
@@ -74,13 +78,13 @@ while True:
 				if initBuild:
 					buildTo = Collision.getObjectAt(Terrain.List, x, y)
 					buildPlan = builder.calculatePath(buildFrom, buildTo, Terrain.List)
-					initBuild - False
+					initBuild = False
 					dX = abs(buildFrom.rect.x - buildTo.rect.x)
 					dY = abs(buildFrom.rect.y - buildTo.rect.y)
 					if dX < dY:
-						img = "img/BrickWallVertical.png"
+						img = "img/walls/BrickWallVertical.png"
 					else:
-						img = "img/BrickWallHorizontal.png"
+						img = "img/walls/BrickWallHorizontal.png"
 					for tile in buildPlan:
 						tile.image = pygame.image.load(img)
 						tile.default_image = img
@@ -93,12 +97,20 @@ while True:
 					pygame.quit()
 					sys.exit()
 
+
+	if initBuild and pygame.mouse.get_pressed():
+		x, y = pygame.mouse.get_pos()
+		obj = Collision.getObjectAt(Terrain.List, x, y)
+		#buildPlan = builder.calculatePath(buildFrom, buildTo, Terrain.List)
+		#for tile in buildPlan:
+		#	tile.image = pygame.image.load("img/walls/BlueFloorGreenTint.png")
+
 	for c in Customer.List:
 		x = (int)(random.random() * SCREEN_WIDTH)
 		y = (int)(random.random() * SCREEN_HEIGHT)
 
 		obj = Collision.getObjectAt(Terrain.List, x, y)
-		if c.targetSet == False and obj != None:
+		if obj != None and c.targetSet == False:
 			c.setTarget(obj, grid)
 
 	#LOGIC
@@ -110,6 +122,7 @@ while True:
 		t.motion()
 		t.update()
 	grid.update(Terrain.List)
+
 	#LOGIC
 
 	#COLLISION 
@@ -126,6 +139,7 @@ while True:
 	screen.fill((255, 255, 255))
 	BaseClass.backgroundSprites.draw(screen)
 	BaseClass.foregroundSprites.draw(screen)
+	GUIBaseClass.allSprites.draw(screen)
 	pygame.display.flip()	
 	#DRAW
 

@@ -19,8 +19,7 @@ class builder:
 		visited[start] = None
 
 		for tile in objList:
-			if tile.walkable == True:
-				openList.add(tile)
+			openList.add(tile)
 
 		while not frontier.empty():
 			current = frontier.get()
