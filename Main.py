@@ -14,7 +14,7 @@ if FULLSCREEN:
 	SCREEN_WIDTH, SCREEN_HEIGHT = screenInfo.current_w, screenInfo.current_h
 	FLAGS = pygame.FULLSCREEN | pygame.DOUBLEBUF
 else: 
-	SCREEN_WIDTH, SCREEN_HEIGHT = 900, 500
+	SCREEN_WIDTH, SCREEN_HEIGHT = 900, 600
 	FLAGS = pygame.DOUBLEBUF
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), FLAGS, 32)
@@ -23,16 +23,16 @@ clock = pygame.time.Clock()
 FPS = 40
 fiveSecondinterval = FPS * 5
 totalFrames = 0
-#SETTINGS
+# SETTINGS
 
-#TERRAIN
+# TERRAIN
 TILE_SIZE = 30
 matrix = [[0 for i in xrange((SCREEN_WIDTH+TILE_SIZE) / TILE_SIZE)] for i in xrange((SCREEN_HEIGHT+TILE_SIZE) / TILE_SIZE)]
 matrix = loadMap(matrix)
 generateMap(matrix)
 #TERRAIN
 
-#AI
+# AI
 grid = GridWithWeights(matrix)
 # AI
 
@@ -46,14 +46,13 @@ buildTo = None
 # BUILD
 
 # UNITS
-for i in xrange(1, 4):
+for i in xrange(1, 2):
 	Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
 
-
+Truck(1920, 495, 60, 30, "img/truck.png")
 
 # UNITS
 
-#UNITS
 # ---------- MAIN GAME LOOP -------------
 while True:
 	totalFrames += 1	
@@ -106,6 +105,10 @@ while True:
 	for c in Customer.List:
 		c.motion()
 		c.update()
+
+	for t in Truck.List:
+		t.motion()
+		t.update()
 	#LOGIC
 
 	#COLLISION 

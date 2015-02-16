@@ -49,8 +49,23 @@ def generateMap(matrix):
 			if(matrix[i][j] == 14):
 				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallTopConnection.png", False)
 			if(matrix[i][j] == 15):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallBottomConnection.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BrickWallBottomConnection.png", True)
+			
+			if(matrix[i][j] == 16):
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/Road/road_mid_left.png", False)
+			if(matrix[i][j] == 17):
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/Road/road_mid_mid.png", False)
 
+			if(matrix[i][j] == 18):
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/Road/road.png", False)
+
+			if(matrix[i][j] == 19):
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/Road/road_bottom_left.png", False)
+
+			if(matrix[i][j] == 20):
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/Road/road_top_left.png", False)
+			if(matrix[i][j] == 21):
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/Road/sidewalk.png", True)
 
 
 
