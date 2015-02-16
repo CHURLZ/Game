@@ -1,6 +1,7 @@
 import pygame, sys, math, random
 from classes import *
 from maps import *
+from builder import *
 from ai import AI, GridWithWeights
 
 pygame.init()
@@ -20,8 +21,8 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), FLAGS, 32)
 screen.set_alpha(None)
 clock = pygame.time.Clock()
 FPS = 40
-fivesecondinterval = FPS * 5
-totalframes = 0
+fiveSecondinterval = FPS * 5
+totalFrames = 0
 #SETTINGS
 
 #TERRAIN
@@ -38,21 +39,21 @@ grid = GridWithWeights(matrix)
 # MISC
 # MISC
 
-# UNITS
-#BUILD
+# BUILD
 initBuild = False
 buildFrom = None
 buildTo = None
-#BUILD
+# BUILD
 
-#UNITS
+# UNITS
 Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
 #Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+# UNITS
 
 #UNITS
 # ---------- MAIN GAME LOOP -------------
 while True:
-	totalframes += 1	
+	totalFrames += 1	
 
 	for event in pygame.event.get():  
 			if event.type == pygame.QUIT:  
@@ -70,7 +71,7 @@ while True:
 				#Box(obj.rect.x, obj.rect.y, 30, 30, "img/box_full.png")
 				if initBuild:
 					buildTo = Collision.getObjectAt(Terrain.List, x, y)
-					buildPlan = AI.calculatePath(buildFrom, buildTo, Terrain.List)
+					buildPlan = builder.calculatePath(buildFrom, buildTo, Terrain.List)
 					initBuild - False
 					dX = abs(buildFrom.rect.x - buildTo.rect.x)
 					dY = abs(buildFrom.rect.y - buildTo.rect.y)
@@ -82,8 +83,8 @@ while True:
 						tile.image = pygame.image.load(img)
 						tile.default_image = img
 						tile.walkable = False
-				for c in Customer.List:
-					c.setTarget(c.targetTile)
+				#for c in Customer.List:
+					#c.setTarget(c.targetTile, matrix)
 
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_ESCAPE:
