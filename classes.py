@@ -60,6 +60,62 @@ class Box(BaseClass):
 			if Collision.contains(obj, self.centerX, self.centerY):
 				return obj
 
+class Truck(BaseClass):
+	List = pygame.sprite.Group()
+	def __init__(self, x, y, width, height, image_string):
+		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.FOREGROUND)
+		Truck.List.add(self)
+		self.DRIVING = 0
+		self.ARRIVED = 1
+		self.LOADING = 2
+		self.UNLOADING = 3
+		self.WAITING = 4
+		self.state = self.DRIVING
+
+		self.targetSet = True
+		self.targetX = 200
+		self.xDir = 1
+		self.xSpeed, self.ySpeed, self.acceleration = 0, 0, 0
+		self.movementSpeed, self.maxSpeed = 2, 5
+
+	def motion(self):
+		self.xSpeed += self.acceleration
+		self.xSpeed *= .9
+		if abs(self.xSpeed) > self.maxSpeed:
+			self.xSpeed = self.maxSpeed * self.xDir
+
+		self.rect.x += self.xSpeed
+		self.rect.y += self.ySpeed
+
+		self.walkX = self.rect.x + (self.width/2)
+		self.walkY = self.rect.y + self.height
+
+	def update(self):
+		if(self.targetSet):
+			self.navigate()
+
+		if self.xSpeed < 0:
+			self.xDir = -1
+		elif self.xSpeed > 0:
+			self.xDir = 1
+		else:
+			self.xDir = 0
+
+	def navigate(self):
+		targetXReached = False
+		self.state = self.DRIVING
+		if self.walkX < self.targetX:
+			self.acceleration = 0
+		elif self.walkX > self.targetX:
+			self.acceleration = -self.movementSpeed
+		else:
+			targetXReached = True
+			self.acceleration = 0
+
+		if targetXReached:
+			self.state = self.ARRIVED
+			self.targetSet = False
+
 class Customer(BaseClass):
 	List = pygame.sprite.Group()
 	def __init__(self, x, y, width, height, image_string):
@@ -227,7 +283,7 @@ class BlueFloor(Terrain):
 	def __init__(self, x, y):
 		width = 30
 		height = 30
-		image_string = os.path.join("img", "GrayScaleFloor.png")
+		image_string = os.path.join("img/floor/", "GrayScaleFloor.png")
 
 		# RGB values are in reverse order, so (Blue, Green, Red)
 		palette = [hexToBGR(0x8EAEE0), hexToBGR(0x5D7394), hexToBGR(0x5D7394), hexToBGR(0x354154)]
