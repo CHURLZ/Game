@@ -66,10 +66,10 @@ class Truck(BaseClass):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.FOREGROUND)
 		Truck.List.add(self)
 		self.DRIVING = 0
-		self.ARRIVED
-		self.LOADING = 1
-		self.UNLOADING = 2
-		self.WAITING = 3
+		self.ARRIVED = 1
+		self.LOADING = 2
+		self.UNLOADING = 3
+		self.WAITING = 4
 		self.state = self.DRIVING
 
 		self.targetSet = True
@@ -283,7 +283,7 @@ class BlueFloor(Terrain):
 	def __init__(self, x, y):
 		width = 30
 		height = 30
-		image_string = os.path.join("img", "GrayScaleFloor.png")
+		image_string = os.path.join("img/floor/", "GrayScaleFloor.png")
 
 		# RGB values are in reverse order, so (Blue, Green, Red)
 		palette = [hexToBGR(0x8EAEE0), hexToBGR(0x5D7394), hexToBGR(0x5D7394), hexToBGR(0x354154)]
