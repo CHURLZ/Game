@@ -1,7 +1,9 @@
+
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import pygame, math, time
+import pygame, math, Queue, time
 from collision import *
 
 import heapq
@@ -163,5 +165,3 @@ class AI:
 		(x2, y2) = b
 
 		return abs(x1 - x2) + abs(y1 - y2)
-
-
