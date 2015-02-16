@@ -1,83 +1,167 @@
-import pygame, math, Queue
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import pygame, math, time
 from collision import *
 
+import heapq
+import collections
+
+
+# Wrapper for deque class
+class Queue:
+    def __init__(self):
+        self.elements = collections.deque()
+    
+    def empty(self):
+        return len(self.elements) == 0
+    
+    def put(self, x):
+        self.elements.append(x)
+    
+    def get(self):
+        return self.elements.popleft()
+
+class PriorityQueue:
+	def __init__(self):
+		self.elements = []
+
+	def empty(self):
+		return len(self.elements) == 0
+
+	def put(self, item, priority):
+		heapq.heappush(self.elements, (priority, item))
+
+	def get(self):
+		return heapq.heappop(self.elements)[1]
+
+class Grid(object):
+	def __init__(self, matrix):
+		self.width = len(matrix[0]) - matrix[0].count(0)
+		self.height = len(matrix) - 1
+		self.walls = []
+
+		for y, l in enumerate(matrix):
+			for x, element in enumerate(l):
+				if int(element) > 1:
+					self.walls.append((x, y))
+
+	def in_bounds(self, id):
+		(x, y) = id
+		return 0 <= x <= self.width and 0 <= y <= self.height
+    
+	def passable(self, id):
+		return id not in self.walls
+    
+	def neighbors(self, id):
+		(x, y) = id
+		
+		# results = [(x+1, y), (x, y-1), (x-1, y), (x, y+1)]
+		# Allows diagonal movement
+		results = [(x+1, y-1), (x+1, y), (x+1, y-1), (x, y-1), (x-1, y-1), (x-1, y), (x-1, y+1), (x, y+1)]
+		if (x + y) % 2 == 0: results.reverse() # aesthetics
+		
+		results = filter(self.in_bounds, results)
+		results = filter(self.passable, results)
+
+		return results
+
+	def printPath(self, start, goal, path):
+		out = [[' ' for i in range(self.width)] for i in range(self.height)]
+
+		grid = [[0 for i in range(self.width)] for i in range(self.height)]
+
+		for element in self.walls:
+			grid[element[1]][element[0]] = 1
+
+
+		for i in range(self.height):
+			for j in range(self.width):
+				if (j, i) == start:
+					out[i][j] = 'S'
+				elif (j, i) == goal:
+					out[i][j] = 'G'
+				elif grid[i][j] == 0:
+					if (j, i) in path:
+						out[i][j] = '%'
+					else:
+						out[i][j] = '-'
+				elif grid[i][j] == 1:
+					out[i][j] = '#'
+
+		printout = [""] * self.height 
+		for i in range(self.height):
+			for j in range(self.width):
+				printout[i] += out[i][j]
+				printout[i] += " "
+
+
+		for l in printout:
+			print l
+
+
+class GridWithWeights(Grid):
+	def __init__(self, matrix):
+		super(GridWithWeights, self).__init__(matrix)
+		self.weights = {}
+
+	def cost(self, a, b): 
+		return self.weights.get(b, 1)
+
+
+
 class AI:
-	NONE = "none"
-	LEFT = "left"
-	RIGHT = "right"
-	UP = "up"
-	DOWN = "down"
+	total = 0
+	count = 0
 
 	@staticmethod
-	def calculatePath(start, goal, objList):
- 		openList = set()
+	def calculatePath(graph, start, goal):
+		startTime = time.clock() * 1000
+		frontier = PriorityQueue()
+		frontier.put(start, 0)
 
-		frontier = Queue.Queue()
-		frontier.put(start)
-		visited = {}
-		visited[start] = None
+		came_from = {}
+		cost_so_far = {}
 
-		for tile in objList:
-			tile.image = pygame.image.load(tile.default_image)
-			if tile.walkable == True:
-				openList.add(tile)
+		came_from[start] = None
+		cost_so_far[start] = 0
 
 		while not frontier.empty():
 			current = frontier.get()
 
 			if current == goal:
 				break
-				
-			for next in AI.getNeighbours(current, objList):
-				if next not in visited and next in openList:
-					visited[next] = current
-					frontier.put(next)
-					next.image = pygame.image.load("img/BlueFloorGreenTint.png")
 
-		path = AI.reconstructPath(start, goal, visited)
-		for p in path:
-			p.image = pygame.image.load("img/BlueFloorPathTint.png")
+			for next in graph.neighbors(current):
+				new_cost = cost_so_far[current] + graph.cost(current, next)
+				if next not in cost_so_far or new_cost < cost_so_far[next]:
+					cost_so_far[next] = new_cost
+					priority = new_cost + AI.heuristic(goal, next)
+					frontier.put(next, priority)
+					came_from[next] = current
 
-		return path
+		AI.total += (time.clock() * 1000) - startTime
+		AI.count += 1
+
+		print "Average time: " + str(AI.total / AI.count) + "ms"
+
+		return came_from, cost_so_far
 
 	@staticmethod
-	def reconstructPath(start, goal, visited):
+	def reconstructPath(came_from, start, goal):
 		current = goal
 		path = [current]
 		while current != start:
-			current = visited[current]
+			current = came_from[current]
+			# path.append((current[0] * 30, current[1] * 30))
 			path.append(current)
 		return path
 
 	@staticmethod
-	def getNeighbours(obj, objList):
+	def heuristic(a, b):
+		(x1, y1) = a
+		(x2, y2) = b
 
-		left = AI.getAdjacent(obj, AI.LEFT, objList)
-		right = AI.getAdjacent(obj, AI.RIGHT, objList)
-		down = AI.getAdjacent(obj, AI.DOWN, objList)
-		up = AI.getAdjacent(obj, AI.UP, objList)
+		return abs(x1 - x2) + abs(y1 - y2)
 
-		return {left, right, down, up}
-	
-	@staticmethod
-	def getHeuristic(goal, tile):
-		x = tile.rect.x - goal.rect.x
-		y = tile.rect.y - goal.rect.y
-		return (abs)(x+y)
 
-	@staticmethod
-	def getAdjacent(current, side, objList):
-		if current == None:
-			return None
-
-		obj = None
-		if side == AI.LEFT:
-			obj = Collision.getTileAt(objList, current.rect.x - 1, current.rect.y+1)
-		elif side == AI.RIGHT:
-			obj = Collision.getTileAt(objList, current.rect.x + current.rect.width + 1, current.rect.y+1)	
-		elif side == AI.UP:
-			obj = Collision.getTileAt(objList, current.rect.x + 1, current.rect.y - 1)	
-		elif side == AI.DOWN:
-			obj = Collision.getTileAt(objList, current.rect.x + 1, current.rect.y + current.height + 1)	
-
-		return obj

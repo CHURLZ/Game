@@ -1,6 +1,7 @@
 import pygame, sys, math, random
 from classes import *
 from maps import *
+from ai import AI, GridWithWeights
 
 pygame.init()
 
@@ -30,20 +31,31 @@ matrix = loadMap(matrix)
 generateMap(matrix)
 #TERRAIN
 
-#MISC
-#MISC
+#AI
+grid = GridWithWeights(matrix)
 
-#UNITS
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+# AI TESTS
+# parents, cost = AI.aStarSearch(grid, (1, 1), (10, 10))
+# path = AI.reconstructPath(parents, (1, 1), (10, 10))
+# grid.printPath((1, 1), (10, 10), path)
 
+# AI
+
+# MISC
+# MISC
+
+# UNITS
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
 
 #UNITS
 # ---------- MAIN GAME LOOP -------------
@@ -69,7 +81,7 @@ while True:
 
 		obj = Collision.getTileAt(Terrain.List, x, y)
 		if c.targetSet == False and obj != None:
-			c.setTarget(obj)
+			c.setTarget(obj, grid)
 
 	#LOGIC
 	for c in Customer.List:

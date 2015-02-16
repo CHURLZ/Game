@@ -2,7 +2,7 @@ import random, threading, Queue
 import pygame, math
 import os
 from collision import *
-from ai import *
+from ai import AI
 
 WHITE = (255, 255, 255, 255)
 LIGHT_GRAY = (170, 170, 170, 255)
@@ -61,6 +61,13 @@ class Customer(BaseClass):
 		self.state = self.STANDING
 		Customer.List.add(self)
 
+	def getNextTile(self):
+		(nextDestx, nextDesty) = self.path.pop()
+
+		for obj in Terrain.List:
+			if obj.rect.x == nextDestx * 30 and obj.rect.y == (nextDesty * 30):
+				return obj
+
 	def getCurrentTile(self):
 		for obj in Terrain.List:
 			if Collision.contains(obj, self.walkX, self.walkY):
@@ -71,7 +78,7 @@ class Customer(BaseClass):
 		self.targetY = y
 		self.targetSet = True
 
-	def setTarget(self, obj):
+	def setTarget(self, obj, grid):
 		self.targetTile = obj
 		self.targetX = obj.rect.x # for later
 		self.targetY = obj.rect.y # for later
@@ -80,13 +87,15 @@ class Customer(BaseClass):
 			return
 
 		self.targetSet = True
-		self.path = Queue.Queue()
-		path = self.getPath(self.targetTile)
-		path.reverse()
-		for tile in path:
-			self.path.put(tile)
+		# self.path = Queue.Queue()
+		self.path = self.getPath(self.targetTile, grid)
 
-		self.nextTile = self.path.get()
+		# path.reverse()
+		# for tile in path:
+		# 	self.path.put(tile)
+
+		self.nextTile = self.getNextTile()
+
 
 	def motion(self):
 		self.rect.x += self.xSpeed
@@ -126,9 +135,13 @@ class Customer(BaseClass):
 		elif self.ySpeed > 0:
 			self.yDir = 1
 
-	def getPath(self, goal):
+	def getPath(self, goalTile, grid):
 		self.currentTile = self.getCurrentTile()
-		return AI.calculatePath(self.currentTile, goal, Terrain.List)
+		start = (self.currentTile.rect.x / 30, self.currentTile.rect.y / 30)
+		goal = (goalTile.rect.x / 30, goalTile.rect.y / 30)
+		parents, cost = AI.calculatePath(grid, start, goal)
+
+		return AI.reconstructPath(parents, start, goal)
 
 	def navigate(self):
 		self.state = self.WALKING
@@ -150,8 +163,8 @@ class Customer(BaseClass):
 			self.ySpeed = 0
 
 		if targetXReached and targetYReached:
-			if not self.path.empty():
-				self.nextTile = self.path.get()
+			if self.path:
+				self.nextTile = self.getNextTile()
 			else:
 				self.state = self.STANDING
 				self.targetSet = False
