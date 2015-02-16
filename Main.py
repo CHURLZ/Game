@@ -46,8 +46,11 @@ buildTo = None
 # BUILD
 
 # UNITS
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-#Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+for i in xrange(1, 4):
+	Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+
+
+
 # UNITS
 
 #UNITS
@@ -83,8 +86,8 @@ while True:
 						tile.image = pygame.image.load(img)
 						tile.default_image = img
 						tile.walkable = False
-				#for c in Customer.List:
-					#c.setTarget(c.targetTile, matrix)
+				for c in Customer.List:
+					c.setTarget(c.targetTile, grid)
 
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_ESCAPE:

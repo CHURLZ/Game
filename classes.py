@@ -64,17 +64,25 @@ class Customer(BaseClass):
 	List = pygame.sprite.Group()
 	def __init__(self, x, y, width, height, image_string):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.FOREGROUND)
+		#MOTION
 		self.xSpeed, self.ySpeed = 0, 0
-		self.STANDING = 0
-		self.WALKING = 1
 		self.movementSpeed, self.xDir, self.yDir = 3, 1, 1
+
+		#INTERACTION
 		self.targetX, self.targetY = 0, 0
 		self.targetSet = False
+
+		#PATHFINDING
 		self.targetTile = None
 		self.currentTile = self.getCurrentTile()
 		self.nextTile = None
 		self.path = Queue.Queue()
+
+		#ANIMATION
+		self.STANDING = 0
+		self.WALKING = 1
 		self.state = self.STANDING
+		
 		Customer.List.add(self)
 
 	def getNextTile(self):
@@ -111,8 +119,11 @@ class Customer(BaseClass):
 
 		self.nextTile = self.getNextTile()
 
-
 	def motion(self):
+		if (self.xSpeed + self.ySpeed) > self.movementSpeed:
+			self.xSpeed = self.movementSpeed /2
+			self.ySpeed = self.movementSpeed /2
+
 		self.rect.x += self.xSpeed
 		self.rect.y += self.ySpeed
 
@@ -124,7 +135,7 @@ class Customer(BaseClass):
 
 		if state == self.WALKING:
 			fileName = "img/customer/customer_1_side.png"
-			if self.yDir == -1 and abs(self.ySpeed) > 0:
+			if self.yDir == -1:
 				fileName = "img/customer/customer_1_back.png"
 			self.image = pygame.image.load(fileName)
 			if self.xDir == 1:
@@ -145,15 +156,21 @@ class Customer(BaseClass):
 			self.xDir = -1
 		elif self.xSpeed > 0:
 			self.xDir = 1
+		else:
+			self.xDir = 0
+
 		if self.ySpeed < 0:
 			self.yDir = -1
 		elif self.ySpeed > 0:
 			self.yDir = 1
+		else:
+			self.yDir = 0
 
 	def getPath(self, goalTile, grid):
 		self.currentTile = self.getCurrentTile()
 		start = (self.currentTile.rect.x / 30, self.currentTile.rect.y / 30)
 		goal = (goalTile.rect.x / 30, goalTile.rect.y / 30)
+		#hardcoded val 30 to variable PLIIIIZ
 		parents, cost = AI.calculatePath(grid, start, goal)
 
 		return AI.reconstructPath(parents, start, goal)
