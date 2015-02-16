@@ -2,7 +2,7 @@ import pygame, sys, math, random
 from classes import *
 from maps import *
 from builder import *
-from ai import AI, GridWithWeights
+from ai import AI
 
 pygame.init()
 
@@ -109,6 +109,7 @@ while True:
 	for t in Truck.List:
 		t.motion()
 		t.update()
+	grid.update(Terrain.List)
 	#LOGIC
 
 	#COLLISION 
