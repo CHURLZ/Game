@@ -27,7 +27,7 @@ class Collision:
 		return True
 
 	@staticmethod	
-	def getTileAt(objList, x, y):
+	def getObjectAt(objList, x, y):
 		for obj in objList:
 			if Collision.contains(obj, x, y):
 				return obj

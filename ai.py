@@ -12,7 +12,7 @@ class AI:
 	def calculatePath(start, goal, objList):
 		startTime = time.clock()
 
- 		openList = set()
+		openList = set()
 
 		frontier = Queue.Queue()
 		frontier.put(start)
@@ -20,7 +20,7 @@ class AI:
 		visited[start] = None
 
 		for tile in objList:
-			#tile.image = pygame.image.load(tile.default_image)
+			tile.image = pygame.image.load(tile.default_image)
 			if tile.walkable == True:
 				openList.add(tile)
 
@@ -34,22 +34,28 @@ class AI:
 				if next not in visited and next in openList:
 					visited[next] = current
 					frontier.put(next)
-					#next.image = pygame.image.load("img/BlueFloorGreenTint.png")
+					next.image = pygame.image.load("img/BlueFloorGreenTint.png")
 
 		path = AI.reconstructPath(start, goal, visited)
-		#for p in path:
-		#	p.image = pygame.image.load("img/BlueFloorPathTint.png")
+		if path == None:
+			return None
+		for p in path:
+			p.image = pygame.image.load("img/BlueFloorPathTint.png")
 		stopTime = time.clock()
-		print stopTime - startTime
 		return path
 
 	@staticmethod
 	def reconstructPath(start, goal, visited):
 		current = goal
 		path = [current]
-		while current != start:
-			current = visited[current]
-			path.append(current)
+		try:
+			path = [current]
+			while current != start:
+				current = visited[current]
+				path.append(current)
+		except KeyError:
+			print "no path!"
+			return None
 		return path
 
 	@staticmethod
@@ -63,9 +69,9 @@ class AI:
 		return {left, right, down, up}
 	
 	@staticmethod
-	def getHeuristic(goal, tile):
-		x = tile.rect.x - goal.rect.x
-		y = tile.rect.y - goal.rect.y
+	def getHeuristic(current, goal):
+		x = current.rect.x - goal.rect.x
+		y = current.rect.y - goal.rect.y
 		return (abs)(x+y)
 
 	@staticmethod
@@ -75,12 +81,12 @@ class AI:
 
 		obj = None
 		if side == AI.LEFT:
-			obj = Collision.getTileAt(objList, current.rect.x - 1, current.rect.y+1)
+			obj = Collision.getObjectAt(objList, current.rect.x - 1, current.rect.y+1)
 		elif side == AI.RIGHT:
-			obj = Collision.getTileAt(objList, current.rect.x + current.rect.width + 1, current.rect.y+1)	
+			obj = Collision.getObjectAt(objList, current.rect.x + current.rect.width + 1, current.rect.y+1)	
 		elif side == AI.UP:
-			obj = Collision.getTileAt(objList, current.rect.x + 1, current.rect.y - 1)	
+			obj = Collision.getObjectAt(objList, current.rect.x + 1, current.rect.y - 1)	
 		elif side == AI.DOWN:
-			obj = Collision.getTileAt(objList, current.rect.x + 1, current.rect.y + current.height + 1)	
+			obj = Collision.getObjectAt(objList, current.rect.x + 1, current.rect.y + current.height + 1)	
 
 		return obj

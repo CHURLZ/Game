@@ -36,6 +36,10 @@ class BaseClass(pygame.sprite.Sprite):
 		self.rect.y = y
 		self.width = width
 		self.height = height
+		self.walkX = x + (width / 2)
+		self.walkY = y + height 
+		self.centerX = self.walkX
+		self.centerY = self.rect.y + (height / 2)
 
 class Employee(BaseClass):
 	List = pygame.sprite.Group()
@@ -43,12 +47,24 @@ class Employee(BaseClass):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.FOREGROUND)
 		Employee.List.add(self)
 
+class Box(BaseClass):
+	List = pygame.sprite.Group()
+	def __init__(self, x, y, width, height, image_string):
+		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.BACKGROUND)
+		Box.List.add(self)
+		self.currentTile = self.getCurrentTile()
+		self.currentTile.walkable = False
+
+	def getCurrentTile(self):
+		for obj in Terrain.List:
+			if Collision.contains(obj, self.centerX, self.centerY):
+				return obj
+
 class Customer(BaseClass):
 	List = pygame.sprite.Group()
 	def __init__(self, x, y, width, height, image_string):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.FOREGROUND)
 		self.xSpeed, self.ySpeed = 0, 0
-		self.walkX, self.walkY = self.rect.x, self.rect.y
 		self.STANDING = 0
 		self.WALKING = 1
 		self.movementSpeed, self.xDir, self.yDir = 3, 1, 1
@@ -82,6 +98,8 @@ class Customer(BaseClass):
 		self.targetSet = True
 		self.path = Queue.Queue()
 		path = self.getPath(self.targetTile)
+		if path == None:
+			return
 		path.reverse()
 		for tile in path:
 			self.path.put(tile)

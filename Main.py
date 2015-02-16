@@ -33,42 +33,15 @@ generateMap(matrix)
 #MISC
 #MISC
 
+#BUILD
+initBuild = False
+buildFrom = None
+buildTo = None
+#BUILD
+
 #UNITS
 Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
-Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+#Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
 
 #UNITS
 # ---------- MAIN GAME LOOP -------------
@@ -80,8 +53,31 @@ while True:
 				pygame.quit()  
 				sys.exit() 	
 
-		#	if event.type == pygame.MOUSEBUTTONUP:
-		#		x, y = pygame.mouse.get_pos()
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				initBuild = True
+				x, y = pygame.mouse.get_pos()
+				buildFrom = Collision.getObjectAt(Terrain.List, x, y)
+
+			if event.type == pygame.MOUSEBUTTONUP:
+				x, y = pygame.mouse.get_pos()
+				#obj = Collision.getObjectAt(Terrain.List, x, y)
+				#Box(obj.rect.x, obj.rect.y, 30, 30, "img/box_full.png")
+				if initBuild:
+					buildTo = Collision.getObjectAt(Terrain.List, x, y)
+					buildPlan = AI.calculatePath(buildFrom, buildTo, Terrain.List)
+					initBuild - False
+					dX = abs(buildFrom.rect.x - buildTo.rect.x)
+					dY = abs(buildFrom.rect.y - buildTo.rect.y)
+					if dX < dY:
+						img = "img/BrickWallVertical.png"
+					else:
+						img = "img/BrickWallHorizontal.png"
+					for tile in buildPlan:
+						tile.image = pygame.image.load(img)
+						tile.default_image = img
+						tile.walkable = False
+				for c in Customer.List:
+					c.setTarget(c.targetTile)
 
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_ESCAPE:
@@ -92,7 +88,7 @@ while True:
 		x = (int)(random.random() * SCREEN_WIDTH)
 		y = (int)(random.random() * SCREEN_HEIGHT)
 
-		obj = Collision.getTileAt(Terrain.List, x, y)
+		obj = Collision.getObjectAt(Terrain.List, x, y)
 		if c.targetSet == False and obj != None:
 			c.setTarget(obj)
 
