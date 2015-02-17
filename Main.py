@@ -36,7 +36,6 @@ TILES_HEIGHT = 20
 matrix = [[0 for i in xrange(TILES_WIDTH)] for i in xrange(TILES_HEIGHT)]
 matrix = loadMap(matrix)
 
-
 # matrix = createMap(matrix)
 generateMap(matrix)
 #TERRAIN
@@ -53,6 +52,7 @@ initBuild = False
 buildFrom = None
 buildTo = None
 builtSinceLastLoop = True
+initRemove = False
 # BUILD
 
 # UNITS
@@ -83,43 +83,47 @@ while True:
 				sys.exit() 	
 
 			if event.type == pygame.MOUSEBUTTONDOWN:
+				x, y = pygame.mouse.get_pos()
 				if event.button == 1:
 					initBuild = True
-					x, y = pygame.mouse.get_pos()
 					buildFrom = Collision.getObjectAt(Terrain.List, x, y)
-			
+				if event.button == 3:
+					initRemove = True
+					buildFrom = Collision.getObjectAt(Terrain.List, x, y)
+
 			if event.type == pygame.MOUSEBUTTONUP:
+				builtSinceLastLoop = True
+				x, y = pygame.mouse.get_pos()
 				if event.button == 1:
-					x, y = pygame.mouse.get_pos()
 					#obj = Collision.getObjectAt(Terrain.List, x, y)
 					#Box(obj.rect.x, obj.rect.y, 30, 30, "img/box_full.png")
 					if initBuild:
 						buildTo = Collision.getObjectAt(Terrain.List, x, y)
 						buildPlan = builder.calculatePath(buildFrom, buildTo, Terrain.List)
 						initBuild = False
-						builtSinceLastLoop = True
-						dX = abs(buildFrom.rect.x - buildTo.rect.x)
-						dY = abs(buildFrom.rect.y - buildTo.rect.y)
-						if dX < dY:
-							img = "img/walls/BrickWallVertical.png"
-						else:
-							img = "img/walls/BrickWallHorizontal.png"
+						
 						for tile in buildPlan:
-							tile.image = pygame.image.load(img)
-							tile.default_image = pygame.image.load(img)
+							tile.image = images.brickHori
+							tile.default_image = tile.image
 							tile.walkable = False
 					for c in Customer.List:
 						c.setTarget(c.targetTile, grid)
 
 				elif(event.button == 3):
 					try:
-						x, y = pygame.mouse.get_pos()
-						obj = Collision.getObjectAt(Terrain.List, x, y)
-						obj.walkable = True
-						obj.image = images.grayScaleFloor
+						if initRemove:
+							buildTo = Collision.getObjectAt(Terrain.List, x, y)
+							buildPlan = builder.calculatePath(buildFrom, buildTo, Terrain.List)
+							initRemove = False
+							for tile in buildPlan:
+								tile.image = images.grayScaleFloor
+								tile.default_image = tile.image
+								tile.walkable = True
 					except AttributeError:
 						print "~ error removing Wall"
-					initBuild = False
+					initRemove = False
+					for c in Customer.List:
+						c.setTarget(c.targetTile, grid)
 
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_ESCAPE:
@@ -139,6 +143,20 @@ while True:
 		if buildPlan != None:
 			for tile in buildPlan:
 				tile.image = images.buildPath
+
+	if initRemove and pygame.mouse.get_pressed():
+		for tile in Terrain.List:
+			if tile.image == images.removePath:
+				tile.image = tile.default_image
+		
+		buildPlan = None
+		x, y = pygame.mouse.get_pos()
+		obj = Collision.getObjectAt(Terrain.List, x, y)
+		if obj != buildFrom:
+			buildPlan = builder.calculatePath(buildFrom, obj, Terrain.List)
+		if buildPlan != None:
+			for tile in buildPlan:
+				tile.image = images.removePath
 
 	for c in Customer.List:
 		x = (int)(random.random() * SCREEN_WIDTH)
