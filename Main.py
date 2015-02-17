@@ -175,13 +175,15 @@ while True:
 		t.motion()
 		t.update()
 
+
 	grid.update(Terrain.List)	
 
 	if builtSinceLastLoop:
+		matrix = grid.update(Terrain.List)
 		grid.orientWalls(matrix, Terrain.List)
+
 		builtSinceLastLoop = False
 
-	#print Collision.getObjectAt(Terrain.List, 180, 0).image == images.brickHori
 	#LOGIC
 
 	#COLLISION 
