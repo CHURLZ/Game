@@ -95,22 +95,22 @@ class Grid(object):
 	def passable(self, id):
 		return id not in self.walls
     
-	def neighbors(self, id):
+	def neighbors(self, id, filterPassable):
 		(x, y) = id
 		
-		# results = [(x+1, y), (x, y-1), (x-1, y), (x, y+1)]
+		results = [(x+1, y), (x, y-1), (x-1, y), (x, y+1)]
+
 		# Allows diagonal movement
-		results = [(x+1, y-1), (x+1, y), (x+1, y-1), (x, y-1), (x-1, y-1), (x-1, y), (x-1, y+1), (x, y+1)]
-		if (x + y) % 2 == 0: results.reverse() # aesthetics
-		
+		# results = [(x+1, y-1), (x+1, y), (x+1, y-1), (x, y-1), (x-1, y-1), (x-1, y), (x-1, y+1), (x, y+1)]
+
 		results = filter(self.in_bounds, results)
-		results = filter(self.passable, results)
+		if filterPassable:
+			results = filter(self.passable, results)
 
 		return results
 
 	def printPath(self, start, goal, path):
 		out = [[' ' for i in range(self.width)] for i in range(self.height)]
-
 		grid = [[0 for i in range(self.width)] for i in range(self.height)]
 
 		for element in self.walls:

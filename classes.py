@@ -127,6 +127,8 @@ class Customer(BaseClass):
 		#INTERACTION
 		self.targetX, self.targetY = 0, 0
 		self.targetSet = False
+		self.isHolding = False
+		self.holdingObject = None
 
 		#PATHFINDING
 		self.targetTile = None
@@ -146,6 +148,9 @@ class Customer(BaseClass):
 
 		for obj in Terrain.List:
 			if obj.rect.x == nextDestx * 30 and obj.rect.y == (nextDesty * 30):
+				if obj.walkable == False:
+					self.targetSet = False
+					return None
 				return obj
 
 	def getCurrentTile(self):
@@ -268,18 +273,22 @@ class Terrain(BaseClass):
 		Terrain.List.add(self)
 		self.default_image = image_string
 		self.walkable = walkable
+		self.default_palette = palette
 
 		if palette:
-			for y in range(width):
-				for x in range(height):
-					if self.image.get_at((x, y)) == WHITE:
-						self.image.set_at((x, y), palette[0])
-					elif self.image.get_at((x, y)) == LIGHT_GRAY:
-						self.image.set_at((x, y), palette[1])
-					elif self.image.get_at((x, y)) == DARK_GRAY:
-						self.image.set_at((x, y), palette[2])
-					elif self.image.get_at((x, y)) == BLACK:
-						self.image.set_at((x, y), palette[3])
+			self.drawPalette(palette, width, height)
+
+	def drawPalette(self, palette, width, height):
+		for y in range(width):
+			for x in range(height):
+				if self.image.get_at((x, y)) == WHITE:
+					self.image.set_at((x, y), palette[0])
+				elif self.image.get_at((x, y)) == LIGHT_GRAY:
+					self.image.set_at((x, y), palette[1])
+				elif self.image.get_at((x, y)) == DARK_GRAY:
+					self.image.set_at((x, y), palette[2])
+				elif self.image.get_at((x, y)) == BLACK:
+					self.image.set_at((x, y), palette[3])
 
 
 class BlueFloor(Terrain):
@@ -287,7 +296,6 @@ class BlueFloor(Terrain):
 		width = 30
 		height = 30
 		image_string = os.path.join("img/floor/", "GrayScaleFloor.png")
-
 		# RGB values are in reverse order, so (Blue, Green, Red)
 		palette = [hexToBGR(0x8EAEE0), hexToBGR(0x5D7394), hexToBGR(0x5D7394), hexToBGR(0x354154)]
 

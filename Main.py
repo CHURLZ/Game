@@ -52,11 +52,19 @@ for i in xrange(1, 2):
 
 Truck(1920, 495, 60, 30, "img/truck.png")
 
-panel = ActionPanel(0, 10, 60, 400, "img/gui/gui_action_panel.png")
+#panel = ActionPanel(0, 10, 60, 400, "img/gui/gui_action_panel.png")
 
 # UNITS
 
 # ---------- MAIN GAME LOOP -------------
+
+# FLOOD ROOM AND REPAINT
+# TODO: MOVE
+s = Collision.getObjectAt(Terrain.List, 50, 100)
+room = builder.floodRoom(s, Terrain.List)
+for r in room:
+	r.image = pygame.image.load(r.default_image)
+
 while True:
 	totalFrames += 1	
 
@@ -97,13 +105,18 @@ while True:
 					pygame.quit()
 					sys.exit()
 
-
 	if initBuild and pygame.mouse.get_pressed():
+		for tile in Terrain.List:
+			tile.image = pygame.image.load(tile.default_image)
+		
+		buildPlan = None
 		x, y = pygame.mouse.get_pos()
 		obj = Collision.getObjectAt(Terrain.List, x, y)
-		#buildPlan = builder.calculatePath(buildFrom, buildTo, Terrain.List)
-		#for tile in buildPlan:
-		#	tile.image = pygame.image.load("img/walls/BlueFloorGreenTint.png")
+		if obj != buildFrom:
+			buildPlan = builder.calculatePath(buildFrom, obj, Terrain.List)
+		if buildPlan != None:
+			for tile in buildPlan:
+				tile.image = pygame.image.load("img/walls/BlueFloorGreenTint.png")
 
 	for c in Customer.List:
 		x = (int)(random.random() * SCREEN_WIDTH)

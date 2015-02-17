@@ -54,7 +54,7 @@ class AI:
 			if current == goal:
 				break
 
-			for next in graph.neighbors(current):
+			for next in graph.neighbors(current, True):
 				new_cost = cost_so_far[current] + graph.cost(current, next)
 				if next not in cost_so_far or new_cost < cost_so_far[next]:
 					cost_so_far[next] = new_cost
