@@ -1,10 +1,10 @@
 import pygame
 
-
 # Floor
 grayScaleFloor = pygame.image.load("img/floor/GrayScaleFloor.png")
 
 # Brick wall
+brickSingle = pygame.image.load("img/walls/BrickWallSingle.png")
 brickVert = pygame.image.load("img/walls/BrickWallVertical.png")
 brickHori = pygame.image.load("img/walls/BrickWallHorizontal.png")
 brickTopLeftCorner = pygame.image.load("img/walls/BrickWallTopLeftCorner.png")
@@ -18,6 +18,8 @@ brickVertBottomEnd = pygame.image.load("img/walls/BrickWallVerticalBottomEnd.png
 brickIntersection = pygame.image.load("img/walls/BrickWallIntersect.png")
 brickTopConnection = pygame.image.load("img/walls/BrickWallTopConnection.png")
 brickBottomConnection = pygame.image.load("img/walls/BrickWallBottomConnection.png")
+brickRightConnection = pygame.image.load("img/walls/BrickWallRightConnection.png")
+brickLeftConnection = pygame.image.load("img/walls/BrickWallLeftConnection.png")
 
 # Doors
 woodenDoors = pygame.image.load("img/doors/WoodenDoors.png")

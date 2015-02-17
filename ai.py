@@ -38,7 +38,7 @@ class AI:
 
 	@staticmethod
 	def calculatePath(graph, start, goal):
-		startTime = time.clock() * 1000
+		# startTime = time.clock() * 1000
 		frontier = PriorityQueue()
 		frontier.put(start, 0)
 
@@ -62,8 +62,8 @@ class AI:
 					frontier.put(next, priority)
 					came_from[next] = current
 
-		AI.total += (time.clock() * 1000) - startTime
-		AI.count += 1
+		# AI.total += (time.clock() * 1000) - startTime
+		# AI.count += 1
 
 		#print "Average time: " + str(AI.total / AI.count) + "ms"
 

@@ -1,5 +1,6 @@
 from classes import Terrain, BlueFloor
 import pygame, images
+from collision import Collision
 
 TILE_SIZE = 30
 
@@ -18,8 +19,7 @@ def loadMap(matrix):
 	return matrix
 
 def createMap(matrix):
-	print len(matrix)
-	print len(matrix[0])
+
 	for i in range(len(matrix)):
 		for j in range(len(matrix[i])):
 			if i == 0 or i == len(matrix) - 1 or j == 0 or j == len(matrix[i]) - 1:
@@ -32,6 +32,8 @@ def createMap(matrix):
 def generateMap(matrix):
 	for i, line in enumerate(matrix):
 		for j, item in enumerate(matrix[i]):
+			if(matrix[i][j] == 0):
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickVert, False)
 			if(matrix[i][j] == 1):
 				t = BlueFloor((j * TILE_SIZE), i * TILE_SIZE)
 				# t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BlueFloor.png", True)
@@ -82,10 +84,9 @@ def generateMap(matrix):
 
 class Grid(object):
 	def __init__(self, matrix):
-		self.width = len(matrix[0]) - matrix[0].count(0)
+		self.width = len(matrix[0]) - 1
 		self.height = len(matrix) - 1
 		self.walls = []
-		self.grid = [[0 for i in range(self.width)] for i in range(self.height)]
 
 		for y, l in enumerate(matrix):
 			for x, element in enumerate(l):
@@ -101,9 +102,68 @@ class Grid(object):
 
 				self.walls.append((x, y))
 
-	# def orientWalls():
+	def orientWalls(self, matrix, terrainList):
+		for y in range(self.height):
+			for x in range(self.width):
 
+				tile = Collision.getObjectAt(terrainList, x * 30, y * 30)
+				if not tile.walkable:
+				
+					count = self.countAdjacentWalls(matrix, (x, y))
 
+					if count == 0:
+						tile.image = images.brickSingle
+					elif count == 1:
+						tile.image = images.brickVertBottomEnd
+					elif count == 2:
+						tile.image = images.brickHorizRightEnd
+					elif count == 3:
+						tile.image = images.brickTopRightCorner
+					elif count == 4:
+						tile.image = images.brickVertTopEnd
+					elif count == 5:
+						tile.image = images.brickVert
+					elif count == 6:
+						tile.image = images.brickBottomRightCorner
+					elif count == 7:
+						tile.image = images.brickRightConnection
+					elif count == 8:
+						tile.image = images.brickHorizLeftEnd
+					elif count == 9:
+						tile.image = images.brickTopLeftCorner
+					elif count == 10:
+						tile.image = images.brickHori
+					elif count == 11:
+						tile.image = images.brickTopConnection
+					elif count == 12:
+						tile.image = images.brickBottomLeftCorner
+					elif count == 13:
+						tile.image = images.brickLeftConnection
+					elif count == 14:
+						tile.image = images.brickBottomConnection
+					elif count == 15:
+						tile.image = images.brickIntersection
+
+	def countAdjacentWalls(self, matrix, (x, y)):
+		count = 0
+
+		if y > 0:
+			if matrix[y - 1][x] == 0:
+				count += 1
+		if x < self.width:
+			if matrix[y][x + 1] == 0:
+				count += 2
+		if y < self.height:
+			if matrix[y + 1][x] == 0:
+				count += 4
+		if x > 0:
+			if matrix[y][x - 1] == 0:
+				count += 8
+
+		# if (x, y) == (2, 0):
+		# 	print matrix[y][x], matrix[y + 1][x], matrix[y - 1][x], matrix[y][x + 1], matrix[y][x - 1], count
+
+		return count
 
 	def in_bounds(self, id):
 		(x, y) = id
@@ -115,9 +175,9 @@ class Grid(object):
 	def neighbors(self, id):
 		(x, y) = id
 		
-		# results = [(x+1, y), (x, y-1), (x-1, y), (x, y+1)]
+		results = [(x+1, y), (x, y-1), (x-1, y), (x, y+1)]
 		# Allows diagonal movement
-		results = [(x+1, y-1), (x+1, y), (x+1, y-1), (x, y-1), (x-1, y-1), (x-1, y), (x-1, y+1), (x, y+1)]
+		# results = [(x+1, y-1), (x+1, y), (x+1, y-1), (x, y-1), (x-1, y-1), (x-1, y), (x-1, y+1), (x, y+1)]
 		if (x + y) % 2 == 0: results.reverse() # aesthetics
 		
 		results = filter(self.in_bounds, results)

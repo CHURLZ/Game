@@ -30,10 +30,12 @@ totalFrames = 0
 
 # TERRAIN
 TILE_SIZE = 30
-TILES_WIDTH = 30
-TILES_HEIGHT = 25
+TILES_WIDTH = 19
+TILES_HEIGHT = 20
 matrix = [[0 for i in xrange(TILES_WIDTH)] for i in xrange(TILES_HEIGHT)]
 matrix = loadMap(matrix)
+
+
 # matrix = createMap(matrix)
 generateMap(matrix)
 #TERRAIN
@@ -127,7 +129,9 @@ while True:
 		t.motion()
 		t.update()
 	grid.update(Terrain.List)
+	grid.orientWalls(matrix, Terrain.List)
 
+	print Collision.getObjectAt(Terrain.List, 180, 0).image == images.brickHori
 	#LOGIC
 
 	#COLLISION 
