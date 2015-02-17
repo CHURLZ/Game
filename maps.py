@@ -95,18 +95,25 @@ class Grid(object):
 
 	def update(self, tiles):
 		self.walls = []
+		matrix = [[1 for i in xrange(self.width + 1)] for i in xrange(self.height + 1)]
+
 		for tile in tiles:
 			if not tile.walkable:
-				x = tile.rect.x / 30
-				y = tile.rect.y / 30
+				x = (tile.rect.x) / 30
+				y = (tile.rect.y) / 30
 
 				self.walls.append((x, y))
 
-	def orientWalls(self, matrix, terrainList):
-		for y in range(self.height):
-			for x in range(self.width):
+				matrix[y][x] = 0
 
-				tile = Collision.getObjectAt(terrainList, x * 30, y * 30)
+		return matrix
+			
+
+	def orientWalls(self, matrix, terrainList):
+		for y in range(self.height + 1):
+			for x in range(self.width + 1):
+
+				tile = Collision.getObjectAt(terrainList, x * 30 + 1, y * 30 + 1)
 				if not tile.walkable:
 				
 					count = self.countAdjacentWalls(matrix, (x, y))
@@ -116,27 +123,27 @@ class Grid(object):
 					elif count == 1:
 						tile.image = images.brickVertBottomEnd
 					elif count == 2:
-						tile.image = images.brickHorizRightEnd
+						tile.image = images.brickHorizLeftEnd
 					elif count == 3:
-						tile.image = images.brickTopRightCorner
+						tile.image = images.brickBottomLeftCorner
 					elif count == 4:
 						tile.image = images.brickVertTopEnd
 					elif count == 5:
 						tile.image = images.brickVert
 					elif count == 6:
-						tile.image = images.brickBottomRightCorner
+						tile.image = images.brickTopLeftCorner
 					elif count == 7:
 						tile.image = images.brickRightConnection
 					elif count == 8:
-						tile.image = images.brickHorizLeftEnd
+						tile.image = images.brickHorizRightEnd
 					elif count == 9:
-						tile.image = images.brickTopLeftCorner
+						tile.image = images.brickBottomRightCorner
 					elif count == 10:
 						tile.image = images.brickHori
 					elif count == 11:
 						tile.image = images.brickTopConnection
 					elif count == 12:
-						tile.image = images.brickBottomLeftCorner
+						tile.image = images.brickTopRightCorner
 					elif count == 13:
 						tile.image = images.brickLeftConnection
 					elif count == 14:
@@ -149,19 +156,23 @@ class Grid(object):
 
 		if y > 0:
 			if matrix[y - 1][x] == 0:
+				# print "1"
 				count += 1
 		if x < self.width:
 			if matrix[y][x + 1] == 0:
+				# print "2"
 				count += 2
 		if y < self.height:
 			if matrix[y + 1][x] == 0:
+				# print "4"
 				count += 4
 		if x > 0:
 			if matrix[y][x - 1] == 0:
+				# print "8"
 				count += 8
 
-		# if (x, y) == (2, 0):
-		# 	print matrix[y][x], matrix[y + 1][x], matrix[y - 1][x], matrix[y][x + 1], matrix[y][x - 1], count
+		# if (x, y) == (self.width, 0):
+		 	# print matrix[y][x], matrix[y + 1][x], matrix[y - 1][x], matrix[y][x + 1], matrix[y][x - 1], count
 
 		return count
 

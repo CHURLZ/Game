@@ -154,10 +154,9 @@ while True:
 	for t in Truck.List:
 		t.motion()
 		t.update()
-	grid.update(Terrain.List)
+	matrix = grid.update(Terrain.List)
 	grid.orientWalls(matrix, Terrain.List)
 
-	print Collision.getObjectAt(Terrain.List, 180, 0).image == images.brickHori
 	#LOGIC
 
 	#COLLISION 
