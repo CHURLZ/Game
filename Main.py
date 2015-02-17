@@ -79,31 +79,42 @@ while True:
 				sys.exit() 	
 
 			if event.type == pygame.MOUSEBUTTONDOWN:
-				initBuild = True
-				x, y = pygame.mouse.get_pos()
-				buildFrom = Collision.getObjectAt(Terrain.List, x, y)
-				buildFrom.image = pygame.image.load("img/walls/BlueFloorGreenTint.png")
-
+				if event.button == 1:
+					initBuild = True
+					x, y = pygame.mouse.get_pos()
+					buildFrom = Collision.getObjectAt(Terrain.List, x, y)
+			
 			if event.type == pygame.MOUSEBUTTONUP:
-				x, y = pygame.mouse.get_pos()
-				#obj = Collision.getObjectAt(Terrain.List, x, y)
-				#Box(obj.rect.x, obj.rect.y, 30, 30, "img/box_full.png")
-				if initBuild:
-					buildTo = Collision.getObjectAt(Terrain.List, x, y)
-					buildPlan = builder.calculatePath(buildFrom, buildTo, Terrain.List)
+				if event.button == 1:
+					x, y = pygame.mouse.get_pos()
+					#obj = Collision.getObjectAt(Terrain.List, x, y)
+					#Box(obj.rect.x, obj.rect.y, 30, 30, "img/box_full.png")
+					if initBuild:
+						buildTo = Collision.getObjectAt(Terrain.List, x, y)
+						buildPlan = builder.calculatePath(buildFrom, buildTo, Terrain.List)
+						initBuild = False
+						dX = abs(buildFrom.rect.x - buildTo.rect.x)
+						dY = abs(buildFrom.rect.y - buildTo.rect.y)
+						if dX < dY:
+							img = "img/walls/BrickWallVertical.png"
+						else:
+							img = "img/walls/BrickWallHorizontal.png"
+						for tile in buildPlan:
+							tile.image = pygame.image.load(img)
+							tile.default_image = pygame.image.load(img)
+							tile.walkable = False
+					for c in Customer.List:
+						c.setTarget(c.targetTile, grid)
+
+				elif(event.button == 3):
+					try:
+						x, y = pygame.mouse.get_pos()
+						obj = Collision.getObjectAt(Terrain.List, x, y)
+						obj.walkable = True
+						obj.image = images.grayScaleFloor
+					except AttributeError:
+						print "~ error removing Wall"
 					initBuild = False
-					dX = abs(buildFrom.rect.x - buildTo.rect.x)
-					dY = abs(buildFrom.rect.y - buildTo.rect.y)
-					if dX < dY:
-						img = "img/walls/BrickWallVertical.png"
-					else:
-						img = "img/walls/BrickWallHorizontal.png"
-					for tile in buildPlan:
-						tile.image = pygame.image.load(img)
-						tile.default_image = img
-						tile.walkable = False
-				for c in Customer.List:
-					c.setTarget(c.targetTile, grid)
 
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_ESCAPE:

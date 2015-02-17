@@ -273,7 +273,6 @@ class Terrain(BaseClass):
 	def __init__(self, x, y, width, height, image_string, walkable, palette=None):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.BACKGROUND)
 		Terrain.List.add(self)
-		self.default_image = image_string
 		self.walkable = walkable
 		self.default_palette = palette
 
