@@ -114,7 +114,7 @@ class Grid(object):
 			for x in range(self.width + 1):
 
 				tile = Collision.getObjectAt(terrainList, x * 30 + 1, y * 30 + 1)
-				if not tile.walkable:
+				if not tile.walkable and tile.buildable:
 
 				
 					count = self.countAdjacentWalls(matrix, (x, y))
