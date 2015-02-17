@@ -7,6 +7,7 @@ from builder import *
 from ai import AI
 
 pygame.init()
+pygame.display.init()
 
 t1 = time.clock() * 1000
 # SETTINGS

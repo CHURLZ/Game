@@ -35,6 +35,7 @@ sidewalk = pygame.image.load("img/road/sidewalk.png")
 
 # People
 customer = pygame.image.load("img/customer/customer_1_front.png")
+employee_1 = pygame.image.load("img/customer/sprite_employee_1.png")
 
 # Truck
 truck = pygame.image.load("img/truck.png")
