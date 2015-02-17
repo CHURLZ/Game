@@ -52,8 +52,8 @@ print "Startup took: " + str((time.clock() * 1000) - t1)
 # UNITS
 god = God()
 
-for i in xrange(1, 3):
-	Customer(150, 150, 30, 30, images.customer)
+#for i in xrange(1, 3):
+#	Customer(150, 150, 30, 30, images.customer)
 
 Truck(1920, 495, 60, 30, images.truck)
 
@@ -85,8 +85,8 @@ while True:
 			c.setTarget(obj, grid)
 
 	#LOGIC
-	for t in Terrain.List:
-		t.motion(god.CAMERA_X, god.CAMERA_Y)
+	for tile in Terrain.List:
+		tile.motion(god.CAMERA_X, god.CAMERA_Y)
 
 	for c in Customer.List:
 		c.motion(god.CAMERA_X, god.CAMERA_Y)

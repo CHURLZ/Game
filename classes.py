@@ -4,7 +4,7 @@ import os
 import images
 from collision import *
 from ai import AI
-
+from God import *
 WHITE = (255, 255, 255, 255)
 LIGHT_GRAY = (170, 170, 170, 255)
 DARK_GRAY = (85, 85, 85, 255)
@@ -146,6 +146,8 @@ class Customer(BaseClass):
 		#MOTION
 		self.xSpeed, self.ySpeed = 0, 0
 		self.movementSpeed, self.xDir, self.yDir = 3, 1, 1
+		self.cX = 0
+		self.cY = 0
 
 		#INTERACTION
 		self.targetX, self.targetY = 0, 0
@@ -177,8 +179,8 @@ class Customer(BaseClass):
 		(nextDestx, nextDesty) = self.path.pop()
 
 		for obj in Terrain.List:
-			if obj.rect.x == nextDestx * 30 and obj.rect.y == (nextDesty * 30):
-				if obj.walkable == False:
+			if obj.rect.x == (nextDestx * 30)+self.cX and obj.rect.y == (nextDesty * 30)+self.cY:
+				if obj.walkable == False or obj == None:
 					self.targetSet = False
 					return None
 				return obj
@@ -216,6 +218,9 @@ class Customer(BaseClass):
 	def motion(self, x, y):
 		dX = self.rect.x + x
 		dY = self.rect.y + y
+
+		self.cX = x # CAMERA POS
+		self.cY = y
 
 		self.rect.x = dX
 		self.rect.y = dY
@@ -298,22 +303,6 @@ class Customer(BaseClass):
 
 class Terrain(BaseClass):
 	List = pygame.sprite.Group()
-	FLOOR = 1
-	VERTICAL = 2
-	HORIZONTAL = 3
-	TOP_LEFT_CORNER = 4
-	TOP_RIGHT_CORNER = 5
-	BOTTOM_LEFT_CORNER = 6
-	BOTTOM_RIGHT_CORNER = 7
-	HORIZONTAL_LEFT_END = 8
-	HORIZONTAL_RIGHT_END = 9
-	VERTICAL_TOP_END = 10
-	VERTICAL_BOTTOM_END = 11
-	INTERSECTION = 12
-	TOP_CONNECTION = 14
-	BOTTOM_CONNECTION = 15
-	SIDEWALK = 21
-
 	def __init__(self, x, y, width, height, image_string, walkable, buildable = True, palette=None):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.BACKGROUND)
 		Terrain.List.add(self)

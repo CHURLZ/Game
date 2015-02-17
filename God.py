@@ -35,3 +35,7 @@ class God():
 		else:
 			self.CAMERA_SPEED = self.CAMERA_SPEED_NORMAL
 
+	@staticmethod
+	def getCamera():
+		return {CAMERA_X, CAMERA_Y}
+
