@@ -4,7 +4,8 @@ import pygame
 grayScaleFloor = pygame.image.load("img/floor/GrayScaleFloor.png")
 
 # BUILD
-buildPath = pygame.image.load("img/walls/BlueFloorGreenTint.png")
+buildPath = pygame.image.load("img/floor/BlueFloorGreenTint.png")
+removePath = pygame.image.load("img/floor/BlueFloorRedTint.png")
 
 # Brick wall
 brickSingle = pygame.image.load("img/walls/BrickWallSingle.png")

@@ -292,10 +292,11 @@ class Terrain(BaseClass):
 	BOTTOM_CONNECTION = 15
 	SIDEWALK = 21
 
-	def __init__(self, x, y, width, height, image_string, walkable, palette=None):
+	def __init__(self, x, y, width, height, image_string, walkable, buildable = True, palette=None):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.BACKGROUND)
 		Terrain.List.add(self)
 		self.walkable = walkable
+		self.buildable = buildable
 		self.default_palette = palette
 
 		if palette:
@@ -323,5 +324,5 @@ class BlueFloor(Terrain):
 		# RGB values are in reverse order, so (Blue, Green, Red)
 		palette = [hexToBGR(0x8EAEE0), hexToBGR(0x5D7394), hexToBGR(0x5D7394), hexToBGR(0x354154)]
 
-		Terrain.__init__(self, x, y, width, height, images.grayScaleFloor, True, palette)
+		Terrain.__init__(self, x, y, width, height, images.grayScaleFloor, True, True, palette)
 

@@ -67,20 +67,20 @@ def generateMap(matrix):
 				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickBottomConnection, False)
 			
 			if(matrix[i][j] == 16):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadMidLeft, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadMidLeft, False, False)
 			if(matrix[i][j] == 17):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadMidMid, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadMidMid, False, False)
 
 			if(matrix[i][j] == 18):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.road, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.road, False, False)
 
 			if(matrix[i][j] == 19):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadBottomLeft, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadBottomLeft, False, False)
 
 			if(matrix[i][j] == 20):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadTopLeft, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadTopLeft, False, False)
 			if(matrix[i][j] == 21):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.sidewalk, True)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.sidewalk, True, False)
 
 class Grid(object):
 	def __init__(self, matrix):
@@ -115,6 +115,7 @@ class Grid(object):
 
 				tile = Collision.getObjectAt(terrainList, x * 30 + 1, y * 30 + 1)
 				if not tile.walkable:
+
 				
 					count = self.countAdjacentWalls(matrix, (x, y))
 
@@ -150,6 +151,7 @@ class Grid(object):
 						tile.image = images.brickBottomConnection
 					elif count == 15:
 						tile.image = images.brickIntersection
+					tile.default_image = tile.image
 
 	def countAdjacentWalls(self, matrix, (x, y)):
 		count = 0
