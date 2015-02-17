@@ -113,7 +113,7 @@ while True:
 	if initBuild and pygame.mouse.get_pressed():
 		for tile in Terrain.List:
 			if tile.image == images.buildPath:
-				tile.image = images.grayScaleFloor
+				tile.image = tile.default_image
 		
 		buildPlan = None
 		x, y = pygame.mouse.get_pos()
