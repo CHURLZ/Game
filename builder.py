@@ -51,6 +51,30 @@ class builder:
 		return path
 
 	@staticmethod
+	def floodRoom(start, objList):
+		startTime = time.clock()
+
+		openList = set()
+
+		frontier = Queue.Queue()
+		frontier.put(start)
+		visited = {}
+		visited[start] = None
+
+		for tile in objList:
+			if tile.walkable:
+				openList.add(tile)
+
+		while not frontier.empty():
+			current = frontier.get()
+				
+			for next in builder.getNeighbours(current, objList):
+				if next not in visited and next in openList:
+					visited[next] = current
+					frontier.put(next)
+
+		return visited
+	@staticmethod
 	def getNeighbours(obj, objList):
 		left = builder.getAdjacent(obj, builder.LEFT, objList)
 		right = builder.getAdjacent(obj, builder.RIGHT, objList)

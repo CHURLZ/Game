@@ -32,6 +32,7 @@ class BaseClass(pygame.sprite.Sprite):
 			BaseClass.foregroundSprites.add(self)
 
 		self.image = image
+		self.default_image = self.image
 		self.rect = self.image.get_rect()
 		self.rect.x = x
 		self.rect.y = y
@@ -128,6 +129,8 @@ class Customer(BaseClass):
 		#INTERACTION
 		self.targetX, self.targetY = 0, 0
 		self.targetSet = False
+		self.isHolding = False
+		self.holdingObject = None
 
 		#PATHFINDING
 		self.targetTile = None
@@ -139,7 +142,14 @@ class Customer(BaseClass):
 		self.STANDING = 0
 		self.WALKING = 1
 		self.state = self.STANDING
-		
+
+		employee_1 = images.employee_1
+		employee_1.set_clip(pygame.Rect(0, 0, 30, 30)) #Locate the sprite you want
+		self.employee_front = employee_1.subsurface(employee_1.get_clip()) #Extract the sprite you want
+		employee_1.set_clip(pygame.Rect(30, 0, 30, 30)) #Locate the sprite you want
+		self.employee_side = employee_1.subsurface(employee_1.get_clip())
+		employee_1.set_clip(pygame.Rect(60, 0, 30, 30)) #Locate the sprite you want
+		self.employee_back = employee_1.subsurface(employee_1.get_clip())
 		Customer.List.add(self)
 
 	def getNextTile(self):
@@ -147,6 +157,9 @@ class Customer(BaseClass):
 
 		for obj in Terrain.List:
 			if obj.rect.x == nextDestx * 30 and obj.rect.y == (nextDesty * 30):
+				if obj.walkable == False:
+					self.targetSet = False
+					return None
 				return obj
 
 	def getCurrentTile(self):
@@ -191,21 +204,21 @@ class Customer(BaseClass):
 		self.walkY = self.rect.y + self.height
 
 	def animate(self, state):	
-		fileName = "img/customer/customer_1_front.png"
+		img = "img/customer/customer_1_front.png"
 
 		if state == self.WALKING:
-			fileName = "img/customer/customer_1_side.png"
+			img = self.employee_side
 			if self.yDir == -1:
-				fileName = "img/customer/customer_1_back.png"
-			self.image = pygame.image.load(fileName)
+				img = self.employee_back
+			self.image = img
 			if self.xDir == 1:
 				self.image = pygame.transform.flip(self.image, True, False)
 
 		elif state == self.STANDING:
-			fileName = "img/customer/customer_1_front.png"
+			img = self.employee_front
 			if self.yDir == -1 :
-				fileName = "img/customer/customer_1_back.png"	
-			self.image = pygame.image.load(fileName)
+				img = self.employee_back
+			self.image = img
 
 	def update(self):
 		self.animate(self.state)
@@ -263,30 +276,49 @@ class Customer(BaseClass):
 
 class Terrain(BaseClass):
 	List = pygame.sprite.Group()
+	FLOOR = 1
+	VERTICAL = 2
+	HORIZONTAL = 3
+	TOP_LEFT_CORNER = 4
+	TOP_RIGHT_CORNER = 5
+	BOTTOM_LEFT_CORNER = 6
+	BOTTOM_RIGHT_CORNER = 7
+	HORIZONTAL_LEFT_END = 8
+	HORIZONTAL_RIGHT_END = 9
+	VERTICAL_TOP_END = 10
+	VERTICAL_BOTTOM_END = 11
+	INTERSECTION = 12
+	TOP_CONNECTION = 14
+	BOTTOM_CONNECTION = 15
+	SIDEWALK = 21
 
 	def __init__(self, x, y, width, height, image_string, walkable, palette=None):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.BACKGROUND)
 		Terrain.List.add(self)
-		self.default_image = image_string
 		self.walkable = walkable
+		self.default_palette = palette
 
 		if palette:
-			for y in range(width):
-				for x in range(height):
-					if self.image.get_at((x, y)) == WHITE:
-						self.image.set_at((x, y), palette[0])
-					elif self.image.get_at((x, y)) == LIGHT_GRAY:
-						self.image.set_at((x, y), palette[1])
-					elif self.image.get_at((x, y)) == DARK_GRAY:
-						self.image.set_at((x, y), palette[2])
-					elif self.image.get_at((x, y)) == BLACK:
-						self.image.set_at((x, y), palette[3])
+			self.drawPalette(palette, width, height)
+
+	def drawPalette(self, palette, width, height):
+		for y in range(width):
+			for x in range(height):
+				if self.image.get_at((x, y)) == WHITE:
+					self.image.set_at((x, y), palette[0])
+				elif self.image.get_at((x, y)) == LIGHT_GRAY:
+					self.image.set_at((x, y), palette[1])
+				elif self.image.get_at((x, y)) == DARK_GRAY:
+					self.image.set_at((x, y), palette[2])
+				elif self.image.get_at((x, y)) == BLACK:
+					self.image.set_at((x, y), palette[3])
 
 
 class BlueFloor(Terrain):
 	def __init__(self, x, y):
 		width = 30
 		height = 30
+		image_string = os.path.join("img/floor/", "GrayScaleFloor.png")
 
 		# RGB values are in reverse order, so (Blue, Green, Red)
 		palette = [hexToBGR(0x8EAEE0), hexToBGR(0x5D7394), hexToBGR(0x5D7394), hexToBGR(0x354154)]

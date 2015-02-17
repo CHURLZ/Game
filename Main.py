@@ -7,6 +7,7 @@ from builder import *
 from ai import AI
 
 pygame.init()
+pygame.display.init()
 
 t1 = time.clock() * 1000
 # SETTINGS
@@ -59,11 +60,19 @@ for i in xrange(1, 2):
 
 Truck(1920, 495, 60, 30, images.truck)
 
-panel = ActionPanel(0, 10, 60, 400, images.panel)
+#panel = ActionPanel(0, 10, 60, 400, images.panel)
 
 # UNITS
 
 # ---------- MAIN GAME LOOP -------------
+
+# FLOOD ROOM AND REPAINT
+# TODO: MOVE
+s = Collision.getObjectAt(Terrain.List, 50, 100)
+room = builder.floodRoom(s, Terrain.List)
+for r in room:
+	r.image = images.grayScaleFloor
+
 while True:
 	totalFrames += 1	
 
@@ -73,44 +82,61 @@ while True:
 				sys.exit() 	
 
 			if event.type == pygame.MOUSEBUTTONDOWN:
-				initBuild = True
-				x, y = pygame.mouse.get_pos()
-				buildFrom = Collision.getObjectAt(Terrain.List, x, y)
-				buildFrom.image = pygame.image.load("img/walls/BlueFloorGreenTint.png")
-
+				if event.button == 1:
+					initBuild = True
+					x, y = pygame.mouse.get_pos()
+					buildFrom = Collision.getObjectAt(Terrain.List, x, y)
+			
 			if event.type == pygame.MOUSEBUTTONUP:
-				x, y = pygame.mouse.get_pos()
-				#obj = Collision.getObjectAt(Terrain.List, x, y)
-				#Box(obj.rect.x, obj.rect.y, 30, 30, "img/box_full.png")
-				if initBuild:
-					buildTo = Collision.getObjectAt(Terrain.List, x, y)
-					buildPlan = builder.calculatePath(buildFrom, buildTo, Terrain.List)
+				if event.button == 1:
+					x, y = pygame.mouse.get_pos()
+					#obj = Collision.getObjectAt(Terrain.List, x, y)
+					#Box(obj.rect.x, obj.rect.y, 30, 30, "img/box_full.png")
+					if initBuild:
+						buildTo = Collision.getObjectAt(Terrain.List, x, y)
+						buildPlan = builder.calculatePath(buildFrom, buildTo, Terrain.List)
+						initBuild = False
+						dX = abs(buildFrom.rect.x - buildTo.rect.x)
+						dY = abs(buildFrom.rect.y - buildTo.rect.y)
+						if dX < dY:
+							img = "img/walls/BrickWallVertical.png"
+						else:
+							img = "img/walls/BrickWallHorizontal.png"
+						for tile in buildPlan:
+							tile.image = pygame.image.load(img)
+							tile.default_image = pygame.image.load(img)
+							tile.walkable = False
+					for c in Customer.List:
+						c.setTarget(c.targetTile, grid)
+
+				elif(event.button == 3):
+					try:
+						x, y = pygame.mouse.get_pos()
+						obj = Collision.getObjectAt(Terrain.List, x, y)
+						obj.walkable = True
+						obj.image = images.grayScaleFloor
+					except AttributeError:
+						print "~ error removing Wall"
 					initBuild = False
-					dX = abs(buildFrom.rect.x - buildTo.rect.x)
-					dY = abs(buildFrom.rect.y - buildTo.rect.y)
-					if dX < dY:
-						img = "img/walls/BrickWallVertical.png"
-					else:
-						img = "img/walls/BrickWallHorizontal.png"
-					for tile in buildPlan:
-						tile.image = pygame.image.load(img)
-						tile.default_image = img
-						tile.walkable = False
-				for c in Customer.List:
-					c.setTarget(c.targetTile, grid)
 
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_ESCAPE:
 					pygame.quit()
 					sys.exit()
 
-
 	if initBuild and pygame.mouse.get_pressed():
+		for tile in Terrain.List:
+			if tile.image == images.buildPath:
+				tile.image = tile.default_image
+		
+		buildPlan = None
 		x, y = pygame.mouse.get_pos()
 		obj = Collision.getObjectAt(Terrain.List, x, y)
-		#buildPlan = builder.calculatePath(buildFrom, buildTo, Terrain.List)
-		#for tile in buildPlan:
-		#	tile.image = pygame.image.load("img/walls/BlueFloorGreenTint.png")
+		if obj != buildFrom:
+			buildPlan = builder.calculatePath(buildFrom, obj, Terrain.List)
+		if buildPlan != None:
+			for tile in buildPlan:
+				tile.image = images.buildPath
 
 	for c in Customer.List:
 		x = (int)(random.random() * SCREEN_WIDTH)
@@ -142,7 +168,6 @@ while True:
 	#MISC
 
 	#MISC
-
 
 	#DRAW
 	screen.fill((255, 255, 255))

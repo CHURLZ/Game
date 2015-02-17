@@ -3,6 +3,9 @@ import pygame
 # Floor
 grayScaleFloor = pygame.image.load("img/floor/GrayScaleFloor.png")
 
+# BUILD
+buildPath = pygame.image.load("img/walls/BlueFloorGreenTint.png")
+
 # Brick wall
 brickSingle = pygame.image.load("img/walls/BrickWallSingle.png")
 brickVert = pygame.image.load("img/walls/BrickWallVertical.png")
@@ -34,6 +37,7 @@ sidewalk = pygame.image.load("img/road/sidewalk.png")
 
 # People
 customer = pygame.image.load("img/customer/customer_1_front.png")
+employee_1 = pygame.image.load("img/customer/sprite_employee_1.png")
 
 # Truck
 truck = pygame.image.load("img/truck.png")
