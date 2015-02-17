@@ -1,5 +1,5 @@
 from classes import Terrain, BlueFloor
-import pygame
+import pygame, images
 
 TILE_SIZE = 30
 
@@ -36,49 +36,49 @@ def generateMap(matrix):
 				t = BlueFloor((j * TILE_SIZE), i * TILE_SIZE)
 				# t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BlueFloor.png", True)
 			if(matrix[i][j] == 2):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/walls/BrickWallVertical.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickVert, False)
 			if(matrix[i][j] == 3):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/walls/BrickWallHorizontal.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickHori, False)
 			if(matrix[i][j] == 4):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/walls/BrickWallTopLeftCorner.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickTopLeftCorner, False)
 			if(matrix[i][j] == 5):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/walls/BrickWallTopRightCorner.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickTopRightCorner, False)
 			if(matrix[i][j] == 6):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/walls/BrickWallHorizontalBottomLeftCorner.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickBottomLeftCorner, False)
 			if(matrix[i][j] == 7):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/walls/BrickWallHorizontalBottomRightCorner.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickBottomRightCorner, False)
 			if(matrix[i][j] == 8):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/walls/BrickWallHorizontalLeftEnd.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickHorizLeftEnd, False)
 			if(matrix[i][j] == 9):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/walls/BrickWallHorizontalRightEnd.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickHorizRightEnd, False)
 			if(matrix[i][j] == 10):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/walls/BrickWallVerticalTopEnd.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickVertTopEnd, False)
 			if(matrix[i][j] == 11):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/walls/BrickWallVerticalBottomEnd.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickVertBottomEnd, False)
 			if(matrix[i][j] == 12):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/walls/BrickWallIntersect.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickIntersection, False)
 			if(matrix[i][j] == 13):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/floor/WoodenDoors.png", True)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.woodenDoors, True)
 			if(matrix[i][j] == 14):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/walls/BrickWallTopConnection.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickTopConnection, False)
 			if(matrix[i][j] == 15):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/walls/BrickWallBottomConnection.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickBottomConnection, False)
 			
 			if(matrix[i][j] == 16):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/road/road_mid_left.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadMidLeft, False)
 			if(matrix[i][j] == 17):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/road/road_mid_mid.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadMidMid, False)
 
 			if(matrix[i][j] == 18):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/road/road.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.road, False)
 
 			if(matrix[i][j] == 19):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/road/road_bottom_left.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadBottomLeft, False)
 
 			if(matrix[i][j] == 20):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/road/road_top_left.png", False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadTopLeft, False)
 			if(matrix[i][j] == 21):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/road/sidewalk.png", True)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.sidewalk, True)
 
 class Grid(object):
 	def __init__(self, matrix):

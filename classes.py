@@ -1,6 +1,7 @@
 import random, threading, Queue
 import pygame, math
 import os
+import images
 from collision import *
 from ai import AI
 
@@ -22,7 +23,7 @@ class BaseClass(pygame.sprite.Sprite):
 	backgroundSprites = pygame.sprite.OrderedUpdates()
 	BACKGROUND = 0;
 	FOREGROUND = 1;
-	def __init__(self, x, y, width, height, image_string, layer):
+	def __init__(self, x, y, width, height, image, layer):
 		pygame.sprite.Sprite.__init__(self)
 
 		if layer == BaseClass.BACKGROUND:
@@ -30,7 +31,7 @@ class BaseClass(pygame.sprite.Sprite):
 		if layer == BaseClass.FOREGROUND:
 			BaseClass.foregroundSprites.add(self)
 
-		self.image = pygame.image.load(image_string)
+		self.image = image
 		self.rect = self.image.get_rect()
 		self.rect.x = x
 		self.rect.y = y
@@ -286,10 +287,9 @@ class BlueFloor(Terrain):
 	def __init__(self, x, y):
 		width = 30
 		height = 30
-		image_string = os.path.join("img/floor/", "GrayScaleFloor.png")
 
 		# RGB values are in reverse order, so (Blue, Green, Red)
 		palette = [hexToBGR(0x8EAEE0), hexToBGR(0x5D7394), hexToBGR(0x5D7394), hexToBGR(0x354154)]
 
-		Terrain.__init__(self, x, y, width, height, image_string, True, palette)
+		Terrain.__init__(self, x, y, width, height, images.grayScaleFloor, True, palette)
 
