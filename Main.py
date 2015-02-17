@@ -68,7 +68,7 @@ Truck(1920, 495, 60, 30, images.truck)
 s = Collision.getObjectAt(Terrain.List, 50, 100)
 room = builder.floodRoom(s, Terrain.List)
 for r in room:
-	r.image = pygame.image.load(r.default_image)
+	r.image = images.grayScaleFloor
 
 while True:
 	totalFrames += 1	
@@ -112,7 +112,8 @@ while True:
 
 	if initBuild and pygame.mouse.get_pressed():
 		for tile in Terrain.List:
-			tile.image = pygame.image.load(tile.default_image)
+			if tile.image == images.buildPath:
+				tile.image = images.grayScaleFloor
 		
 		buildPlan = None
 		x, y = pygame.mouse.get_pos()
@@ -121,7 +122,7 @@ while True:
 			buildPlan = builder.calculatePath(buildFrom, obj, Terrain.List)
 		if buildPlan != None:
 			for tile in buildPlan:
-				tile.image = pygame.image.load("img/walls/BlueFloorGreenTint.png")
+				tile.image = images.buildPath
 
 	for c in Customer.List:
 		x = (int)(random.random() * SCREEN_WIDTH)
@@ -151,7 +152,6 @@ while True:
 	#MISC
 
 	#MISC
-
 
 	#DRAW
 	screen.fill((255, 255, 255))

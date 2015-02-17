@@ -4,6 +4,9 @@ import pygame
 # Floor
 grayScaleFloor = pygame.image.load("img/floor/GrayScaleFloor.png")
 
+# BUILD
+buildPath = pygame.image.load("img/walls/BlueFloorGreenTint.png")
+
 # Brick wall
 brickVert = pygame.image.load("img/walls/BrickWallVertical.png")
 brickHori = pygame.image.load("img/walls/BrickWallHorizontal.png")

@@ -32,6 +32,7 @@ class BaseClass(pygame.sprite.Sprite):
 			BaseClass.foregroundSprites.add(self)
 
 		self.image = image
+		self.default_image = self.image
 		self.rect = self.image.get_rect()
 		self.rect.x = x
 		self.rect.y = y
@@ -296,11 +297,8 @@ class BlueFloor(Terrain):
 	def __init__(self, x, y):
 		width = 30
 		height = 30
-<<<<<<< HEAD
 		image_string = os.path.join("img/floor/", "GrayScaleFloor.png")
-=======
 
->>>>>>> fe6e54b837b7425f394411f1bac63b01cf7c9222
 		# RGB values are in reverse order, so (Blue, Green, Red)
 		palette = [hexToBGR(0x8EAEE0), hexToBGR(0x5D7394), hexToBGR(0x5D7394), hexToBGR(0x354154)]
 
