@@ -1,4 +1,5 @@
-import pygame, sys, math, random
+import pygame, sys, math, random, time
+import images
 from classes import *
 from gui import *
 from maps import *
@@ -7,6 +8,7 @@ from ai import AI
 
 pygame.init()
 
+t1 = time.clock() * 1000
 # SETTINGS
 
 FULLSCREEN = False
@@ -28,15 +30,18 @@ totalFrames = 0
 
 # TERRAIN
 TILE_SIZE = 30
-matrix = [[0 for i in xrange((SCREEN_WIDTH+TILE_SIZE) / TILE_SIZE)] for i in xrange((SCREEN_HEIGHT+TILE_SIZE) / TILE_SIZE)]
+TILES_WIDTH = 30
+TILES_HEIGHT = 25
+matrix = [[0 for i in xrange(TILES_WIDTH)] for i in xrange(TILES_HEIGHT)]
 matrix = loadMap(matrix)
+# matrix = createMap(matrix)
 generateMap(matrix)
 #TERRAIN
 
 # AI
 grid = GridWithWeights(matrix)
 # AI
-
+print "Startup took: " + str((time.clock() * 1000) - t1)
 # MISC
 # MISC
 
@@ -48,11 +53,11 @@ buildTo = None
 
 # UNITS
 for i in xrange(1, 2):
-	Customer(150, 150, 30, 30, "img/customer/customer_1_front.png")
+	Customer(150, 150, 30, 30, images.customer)
 
-Truck(1920, 495, 60, 30, "img/truck.png")
+Truck(1920, 495, 60, 30, images.truck)
 
-#panel = ActionPanel(0, 10, 60, 400, "img/gui/gui_action_panel.png")
+#panel = ActionPanel(0, 10, 60, 400, images.panel)
 
 # UNITS
 

@@ -3,12 +3,12 @@ import pygame
 class GUIBaseClass(pygame.sprite.Sprite):
 	allSprites = pygame.sprite.OrderedUpdates()
 
-	def __init__(self, x, y, width, height, image_string):
+	def __init__(self, x, y, width, height, image):
 		pygame.sprite.Sprite.__init__(self)
 
 		GUIBaseClass.allSprites.add(self)
 
-		self.image = pygame.image.load(image_string).convert_alpha()
+		self.image = image.convert_alpha()
 		self.image.set_alpha(128)
 		self.rect = self.image.get_rect()
 		self.rect.x = x
