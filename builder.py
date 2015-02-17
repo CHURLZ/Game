@@ -1,11 +1,85 @@
 import pygame, math, Queue, time
 from collision import *
+from classes import Terrain
+import images
 
 class builder:
 	LEFT = "left"
 	RIGHT = "right"
 	UP = "up"
 	DOWN = "down"
+
+	# BUILD
+	initBuild = False
+	buildFrom = None
+	buildTo = None
+	builtSinceLastLoop = True
+	initRemove = False
+	builtSinceLastLoop = True
+	# BUILD
+
+	@staticmethod
+	def buildWall(x, y):
+		if builder.initBuild:
+			builder.buildTo = Collision.getObjectAt(Terrain.List, x, y)
+			builder.buildPlan = builder.calculatePath(builder.buildFrom, builder.buildTo, Terrain.List)
+			if builder.buildTo == None:
+				builder.buildPlan = None
+			if builder.buildPlan != None:
+				for tile in builder.buildPlan:
+					tile.image = images.brickHori
+					tile.default_image = tile.image
+					tile.walkable = False
+		builder.initBuild = False
+		builder.builtSinceLastLoop = True
+	@staticmethod
+	def destroyWall(x, y):
+		try:
+			if builder.initRemove:
+				builder.buildTo = Collision.getObjectAt(Terrain.List, x, y)
+				builder.buildPlan = builder.calculatePath(builder.buildFrom, builder.buildTo, Terrain.List)
+				if builder.buildTo == None:
+					builder.buildPlan = None
+				builder.initRemove = False
+				if builder.buildPlan != None:
+					for tile in builder.buildPlan:
+						tile.image = images.grayScaleFloor
+						tile.default_image = tile.image
+						tile.walkable = True
+		except AttributeError:
+			print "~ error removing Wall"
+		builder.initRemove = False
+		builder.builtSinceLastLoop = True
+
+	@staticmethod
+	def drawBuildPath(x, y):
+		if builder.initBuild and pygame.mouse.get_pressed():
+			for tile in Terrain.List:
+				if tile.image == images.buildPath:
+					tile.image = tile.default_image
+			builder.buildPlan = None
+			obj = Collision.getObjectAt(Terrain.List, x, y)
+			if obj != builder.buildFrom:
+				builder.buildPlan = builder.calculatePath(builder.buildFrom, obj, Terrain.List)
+			if builder.buildPlan != None:
+				for tile in builder.buildPlan:
+					tile.image = images.buildPath
+
+	@staticmethod
+	def drawRemovePath(x, y):
+		if builder.initRemove and pygame.mouse.get_pressed():
+			for tile in Terrain.List:
+				if tile.image == images.removePath:
+					tile.image = tile.default_image
+			
+			builder.buildPlan = None
+			obj = Collision.getObjectAt(Terrain.List, x, y)
+			if obj != builder.buildFrom:
+				builder.buildPlan = builder.calculatePath(builder.buildFrom, obj, Terrain.List)
+			if builder.buildPlan != None:
+				for tile in builder.buildPlan:
+					tile.image = images.removePath
+
 
 	@staticmethod
 	def calculatePath(start, goal, objList):

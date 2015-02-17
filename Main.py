@@ -5,6 +5,8 @@ from gui import *
 from maps import *
 from builder import *
 from ai import AI
+from process import *
+from God import *
 
 pygame.init()
 pygame.display.init()
@@ -31,8 +33,8 @@ totalFrames = 0
 
 # TERRAIN
 TILE_SIZE = 30
-TILES_WIDTH = 19
-TILES_HEIGHT = 20
+TILES_WIDTH = 42
+TILES_HEIGHT = 24
 matrix = [[0 for i in xrange(TILES_WIDTH)] for i in xrange(TILES_HEIGHT)]
 matrix = loadMap(matrix)
 
@@ -47,23 +49,18 @@ print "Startup took: " + str((time.clock() * 1000) - t1)
 # MISC
 # MISC
 
-# BUILD
-initBuild = False
-buildFrom = None
-buildTo = None
-builtSinceLastLoop = True
-initRemove = False
-# BUILD
-
 # UNITS
-for i in xrange(1, 2):
+god = God()
+
+for i in xrange(1, 3):
 	Customer(150, 150, 30, 30, images.customer)
 
 Truck(1920, 495, 60, 30, images.truck)
 
 #panel = ActionPanel(0, 10, 60, 400, images.panel)
-
 # UNITS
+
+
 
 # ---------- MAIN GAME LOOP -------------
 
@@ -75,88 +72,9 @@ for r in room:
 	r.image = images.grayScaleFloor
 
 while True:
-	totalFrames += 1	
-
-	for event in pygame.event.get():  
-			if event.type == pygame.QUIT:  
-				pygame.quit()  
-				sys.exit() 	
-
-			if event.type == pygame.MOUSEBUTTONDOWN:
-				x, y = pygame.mouse.get_pos()
-				if event.button == 1:
-					initBuild = True
-					buildFrom = Collision.getObjectAt(Terrain.List, x, y)
-				if event.button == 3:
-					initRemove = True
-					buildFrom = Collision.getObjectAt(Terrain.List, x, y)
-
-			if event.type == pygame.MOUSEBUTTONUP:
-				builtSinceLastLoop = True
-				x, y = pygame.mouse.get_pos()
-				if event.button == 1:
-					#obj = Collision.getObjectAt(Terrain.List, x, y)
-					#Box(obj.rect.x, obj.rect.y, 30, 30, "img/box_full.png")
-					if initBuild:
-						buildTo = Collision.getObjectAt(Terrain.List, x, y)
-						buildPlan = builder.calculatePath(buildFrom, buildTo, Terrain.List)
-						initBuild = False
-						
-						for tile in buildPlan:
-							tile.image = images.brickHori
-							tile.default_image = tile.image
-							tile.walkable = False
-					for c in Customer.List:
-						c.setTarget(c.targetTile, grid)
-
-				elif(event.button == 3):
-					try:
-						if initRemove:
-							buildTo = Collision.getObjectAt(Terrain.List, x, y)
-							buildPlan = builder.calculatePath(buildFrom, buildTo, Terrain.List)
-							initRemove = False
-							for tile in buildPlan:
-								tile.image = images.grayScaleFloor
-								tile.default_image = tile.image
-								tile.walkable = True
-					except AttributeError:
-						print "~ error removing Wall"
-					initRemove = False
-					for c in Customer.List:
-						c.setTarget(c.targetTile, grid)
-
-			if event.type == pygame.KEYUP:
-				if event.key == pygame.K_ESCAPE:
-					pygame.quit()
-					sys.exit()
-
-	if initBuild and pygame.mouse.get_pressed():
-		for tile in Terrain.List:
-			if tile.image == images.buildPath:
-				tile.image = tile.default_image
-		
-		buildPlan = None
-		x, y = pygame.mouse.get_pos()
-		obj = Collision.getObjectAt(Terrain.List, x, y)
-		if obj != buildFrom:
-			buildPlan = builder.calculatePath(buildFrom, obj, Terrain.List)
-		if buildPlan != None:
-			for tile in buildPlan:
-				tile.image = images.buildPath
-
-	if initRemove and pygame.mouse.get_pressed():
-		for tile in Terrain.List:
-			if tile.image == images.removePath:
-				tile.image = tile.default_image
-		
-		buildPlan = None
-		x, y = pygame.mouse.get_pos()
-		obj = Collision.getObjectAt(Terrain.List, x, y)
-		if obj != buildFrom:
-			buildPlan = builder.calculatePath(buildFrom, obj, Terrain.List)
-		if buildPlan != None:
-			for tile in buildPlan:
-				tile.image = images.removePath
+	totalFrames += 1
+	process(god)	
+	god.update()
 
 	for c in Customer.List:
 		x = (int)(random.random() * SCREEN_WIDTH)
@@ -167,22 +85,29 @@ while True:
 			c.setTarget(obj, grid)
 
 	#LOGIC
+	for t in Terrain.List:
+		t.motion(god.CAMERA_X, god.CAMERA_Y)
+
 	for c in Customer.List:
-		c.motion()
+		c.motion(god.CAMERA_X, god.CAMERA_Y)
 		c.update()
 
 	for t in Truck.List:
-		t.motion()
+		t.motion(god.CAMERA_X, god.CAMERA_Y)
 		t.update()
 
+	tX, tY = pygame.mouse.get_pos()
+	x, y = tX + god.CAMERA_X, tY + god.CAMERA_Y
+	builder.drawBuildPath(x, y)
+	builder.drawRemovePath(x, y)
+	grid.update(Terrain.List)
 
-	grid.update(Terrain.List)	
-
-	if builtSinceLastLoop:
+	if builder.builtSinceLastLoop:
 		matrix = grid.update(Terrain.List)
 		grid.orientWalls(matrix, Terrain.List)
-
-		builtSinceLastLoop = False
+		builder.builtSinceLastLoop = False
+		for c in Customer.List:
+			c.setTarget(c.targetTile, grid)	
 
 	#LOGIC
 

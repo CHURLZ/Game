@@ -43,6 +43,18 @@ class BaseClass(pygame.sprite.Sprite):
 		self.centerX = self.walkX
 		self.centerY = self.rect.y + (height / 2)
 
+	def motion(self, x, y):
+		dX = self.rect.x + x
+		dY = self.rect.y + y
+
+		self.rect.x = dX
+		self.rect.y = dY
+
+		self.walkX = self.rect.x + (self.width/2)
+		self.walkY = self.rect.y + self.height
+		self.centerX = self.walkX
+		self.centerY = self.rect.y + (self.height / 2)
+
 class Employee(BaseClass):
 	List = pygame.sprite.Group()
 	def __init__(self, x, y, width, height, image_string):
@@ -80,7 +92,13 @@ class Truck(BaseClass):
 		self.xSpeed, self.ySpeed, self.acceleration = 0, 0, 0
 		self.movementSpeed, self.maxSpeed = 2, 5
 
-	def motion(self):
+	def motion(self, x, y):
+		dX = self.rect.x + x
+		dY = self.rect.y + y
+
+		self.rect.x = dX
+		self.rect.y = dY
+
 		self.xSpeed += self.acceleration
 		self.xSpeed *= .9
 		if abs(self.xSpeed) > self.maxSpeed:
@@ -88,6 +106,9 @@ class Truck(BaseClass):
 
 		self.rect.x += self.xSpeed
 		self.rect.y += self.ySpeed
+
+		tX = self.targetX + x
+		self.targetX = tX
 
 		self.walkX = self.rect.x + (self.width/2)
 		self.walkY = self.rect.y + self.height
@@ -192,11 +213,12 @@ class Customer(BaseClass):
 
 		self.nextTile = self.getNextTile()
 
-	def motion(self):
-		if (self.xSpeed + self.ySpeed) > self.movementSpeed:
-			self.xSpeed = self.movementSpeed /2
-			self.ySpeed = self.movementSpeed /2
+	def motion(self, x, y):
+		dX = self.rect.x + x
+		dY = self.rect.y + y
 
+		self.rect.x = dX
+		self.rect.y = dY
 		self.rect.x += self.xSpeed
 		self.rect.y += self.ySpeed
 
