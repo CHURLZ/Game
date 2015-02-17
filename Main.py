@@ -52,6 +52,7 @@ print "Startup took: " + str((time.clock() * 1000) - t1)
 initBuild = False
 buildFrom = None
 buildTo = None
+builtSinceLastLoop = True
 # BUILD
 
 # UNITS
@@ -96,6 +97,7 @@ while True:
 						buildTo = Collision.getObjectAt(Terrain.List, x, y)
 						buildPlan = builder.calculatePath(buildFrom, buildTo, Terrain.List)
 						initBuild = False
+						builtSinceLastLoop = True
 						dX = abs(buildFrom.rect.x - buildTo.rect.x)
 						dY = abs(buildFrom.rect.y - buildTo.rect.y)
 						if dX < dY:
@@ -155,8 +157,11 @@ while True:
 		t.motion()
 		t.update()
 
-	grid.update(Terrain.List)
-	grid.orientWalls(matrix, Terrain.List)
+	grid.update(Terrain.List)	
+
+	if builtSinceLastLoop:
+		grid.orientWalls(matrix, Terrain.List)
+		builtSinceLastLoop = False
 
 	#print Collision.getObjectAt(Terrain.List, 180, 0).image == images.brickHori
 	#LOGIC
