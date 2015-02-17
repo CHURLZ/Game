@@ -1,10 +1,12 @@
 class God():
-	CAMERA_X = 0
-	CAMERA_Y = 0
+	cameraX = 0
+	cameraY = 0
 	
 	CAMERA_SPEED_NORMAL = 5
 	CAMERA_SPEED_FAST = 10
-	CAMERA_SPEED = CAMERA_SPEED_NORMAL
+	cameraSpeed = CAMERA_SPEED_NORMAL
+	cameraSpeedX = 0
+	cameraSpeedY = 0
 
 	key_w = False
 	key_s = False
@@ -16,24 +18,29 @@ class God():
 		print "allahu akbar"
 
 	def update(self):
-		if self.key_w:
-			self.CAMERA_Y = self.CAMERA_SPEED
-		elif self.key_s:
-			self.CAMERA_Y = -self.CAMERA_SPEED
-		else:
-			self.CAMERA_Y = 0
-
-		if self.key_a:
-			self.CAMERA_X = self.CAMERA_SPEED
-		elif self.key_d:
-			self.CAMERA_X = -self.CAMERA_SPEED
-		else:
-			self.CAMERA_X = 0
-
 		if self.key_LSHIFT:
 			self.CAMERA_SPEED = self.CAMERA_SPEED_FAST
 		else:
 			self.CAMERA_SPEED = self.CAMERA_SPEED_NORMAL
+
+		if self.key_w:
+			self.cameraSpeedY = self.CAMERA_SPEED
+		elif self.key_s:
+			self.cameraSpeedY = -self.CAMERA_SPEED
+		else:
+			self.cameraSpeedY = 0
+
+		if self.key_a:
+			self.cameraSpeedX = self.CAMERA_SPEED
+		elif self.key_d:
+			self.cameraSpeedX = -self.CAMERA_SPEED
+		else:
+			self.cameraSpeedX = 0
+
+
+		self.cameraX += self.cameraSpeedX
+		self.cameraY += self.cameraSpeedY
+
 
 	@staticmethod
 	def getCamera():

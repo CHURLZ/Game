@@ -93,14 +93,14 @@ class Grid(object):
 				if int(element) > 1:
 					self.walls.append((x, y))
 
-	def update(self, tiles):
+	def update(self, tiles, cameraX, cameraY):
 		self.walls = []
 		matrix = [[1 for i in xrange(self.width + 1)] for i in xrange(self.height + 1)]
 
 		for tile in tiles:
 			if not tile.walkable:
-				x = (tile.rect.x) / 30
-				y = (tile.rect.y) / 30
+				x = tile.rect.x / TILE_SIZE
+				y = tile.rect.y / TILE_SIZE
 
 				self.walls.append((x, y))
 
@@ -109,15 +109,15 @@ class Grid(object):
 		return matrix
 			
 
-	def orientWalls(self, matrix, terrainList):
+	def orientWalls(self, matrix, terrainList, cameraX, cameraY):
 		for y in range(self.height + 1):
 			for x in range(self.width + 1):
 
-				tile = Collision.getObjectAt(terrainList, x * 30 + 1, y * 30 + 1)
+				tile = Collision.getObjectAt(terrainList, x * TILE_SIZE + cameraX + 1, y * TILE_SIZE + cameraY + 1)
 				if not tile.walkable and tile.buildable:
 
 				
-					count = self.countAdjacentWalls(matrix, (x, y))
+					count = self.countAdjacentWalls(matrix, (x + (cameraX / TILE_SIZE), y + (cameraY / TILE_SIZE)))
 
 					if count == 0:
 						tile.image = images.brickSingle

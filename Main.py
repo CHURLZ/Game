@@ -86,35 +86,34 @@ while True:
 
 	#LOGIC
 	for tile in Terrain.List:
-		tile.motion(god.CAMERA_X, god.CAMERA_Y)
+		tile.motion(god.cameraSpeedX, god.cameraSpeedY)
 
 	for c in Customer.List:
-		c.motion(god.CAMERA_X, god.CAMERA_Y)
+		c.motion(god.cameraSpeedX, god.cameraSpeedY)
 		c.update()
 
 	for t in Truck.List:
-		t.motion(god.CAMERA_X, god.CAMERA_Y)
+		t.motion(god.cameraSpeedX, god.cameraSpeedY)
 		t.update()
 
 	tX, tY = pygame.mouse.get_pos()
-	x, y = tX + god.CAMERA_X, tY + god.CAMERA_Y
+	x, y = tX + god.cameraSpeedX, tY + god.cameraSpeedY
 	builder.drawBuildPath(x, y)
 	builder.drawRemovePath(x, y)
-	grid.update(Terrain.List)
 
 	if builder.builtSinceLastLoop:
-		matrix = grid.update(Terrain.List)
-		grid.orientWalls(matrix, Terrain.List)
+		matrix = grid.update(Terrain.List, god.cameraX, god.cameraY)
+		grid.orientWalls(matrix, Terrain.List, god.cameraX, god.cameraY)
 		builder.builtSinceLastLoop = False
 		for c in Customer.List:
 			c.setTarget(c.targetTile, grid)	
+
 
 	#LOGIC
 
 	#COLLISION 
 
 	#COLLISION 
-
 
 	#MISC
 

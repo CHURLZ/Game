@@ -10,7 +10,7 @@ def process(god):
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			tX, tY = pygame.mouse.get_pos()
-			x, y = tX + god.CAMERA_X, tY + god.CAMERA_Y
+			x, y = tX + god.cameraSpeedX, tY + god.cameraSpeedY
 			if event.button == 1:
 				builder.initBuild = True
 				builder.buildFrom = Collision.getObjectAt(Terrain.List, x, y)
@@ -20,7 +20,7 @@ def process(god):
 
 		if event.type == pygame.MOUSEBUTTONUP:
 				tX, tY = pygame.mouse.get_pos()
-				x, y = tX + god.CAMERA_X, tY + god.CAMERA_Y
+				x, y = tX + god.cameraSpeedX, tY + god.cameraSpeedY
 
 				if event.button == 1:
 					builder.buildWall(x, y)
