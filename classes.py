@@ -153,11 +153,11 @@ class Customer(BaseClass):
 
 		#INTERACTION
 		self.targetX, self.targetY = 0, 0
-		self.targetSet = False
 		self.isHolding = False
 		self.holdingObject = None
 
 		#PATHFINDING
+		self.targetSet = False
 		self.targetTile = None
 		self.currentTile = self.getCurrentTile()
 		self.nextTile = None
@@ -193,17 +193,22 @@ class Customer(BaseClass):
 				return obj
 
 	def setTarget(self, obj, grid):
-		if obj:
+		if not obj or not obj.walkable:
+			return
+		else:
 			self.targetTile = obj
-			
-			if obj.walkable == False:
-				return
 
 			self.targetSet = True
 			self.path = self.getPath(self.targetTile, grid)
 			if self.path == None:
 				self.targetSet = False
 				return 
+
+			for p in self.path:
+				for obj in Terrain.List:
+					(x, y) = p
+					if obj.gridPos == (x, y):
+						obj.image = images.path
 
 			self.nextTile = self.getNextTile()
 
@@ -213,6 +218,9 @@ class Customer(BaseClass):
 
 		self.walkX = self.rect.x + (self.width/2)
 		self.walkY = self.rect.y + self.height
+
+		self.cX += x
+		self.cY += y
 
 	def animate(self, state):	
 		img = "img/customer/customer_1_front.png"
@@ -252,7 +260,13 @@ class Customer(BaseClass):
 
 	def getPath(self, goalTile, grid):
 		self.currentTile = self.getCurrentTile()
-		start = (self.currentTile.rect.x / TILE_SIZE, self.currentTile.rect.y / TILE_SIZE)
+		if self.currentTile == None:
+			print "~error: Current tile is none"
+			return
+		else:
+			self.currentTile.image = images.removePath
+
+		start = ((self.currentTile.rect.x - self.cX)/ TILE_SIZE, (self.currentTile.rect.y - self.cY) / TILE_SIZE)
 		goal = (goalTile.rect.x / TILE_SIZE, goalTile.rect.y / TILE_SIZE)
 
 		parents, cost = AI.calculatePath(grid, start, goal)
@@ -282,6 +296,7 @@ class Customer(BaseClass):
 		if targetXReached and targetYReached:
 			if self.path:
 				self.nextTile = self.getNextTile()
+				self.nextTile.image = images.buildPath
 			else:
 				self.state = self.STANDING
 				self.targetSet = False

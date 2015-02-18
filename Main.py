@@ -32,22 +32,22 @@ totalFrames = 0
 # SETTINGS
 
 # TERRAIN
-
 TILE_SIZE = 30
 TILES_WIDTH = 20
-TILES_HEIGHT = 15
+TILES_HEIGHT = 20
 matrix = [[0 for i in xrange(TILES_WIDTH)] for i in xrange(TILES_HEIGHT)]
 matrix = loadMap(matrix)
-
 # matrix = createMap(matrix)
 generateMap(matrix)
 #TERRAIN
-print Terrain.List.sprites
+
+
 # AI
 grid = GridWithWeights(matrix)
 # AI
-print "Startup took: " + str((time.clock() * 1000) - t1)
+
 # MISC
+print "Startup took: " + str((time.clock() * 1000) - t1)
 # MISC
 
 # UNITS
@@ -64,24 +64,15 @@ Truck(1920, 495, 60, 30, images.truck)
 
 
 # ---------- MAIN GAME LOOP -------------
-
-# FLOOD ROOM AND REPAINT
-# TODO: MOVE
-s = Collision.getObjectAt(Terrain.List, 50, 100)
-room = builder.floodRoom(s, Terrain.List)
-for r in room:
-	r.image = images.grayScaleFloor
-
 while True:
 	totalFrames += 1
 	process(god)	
 	god.update()
 
 	for c in Customer.List:
-		x = (int)(random.random() * SCREEN_WIDTH)
-		y = (int)(random.random() * SCREEN_HEIGHT)
-
 		if not c.targetSet:
+			x = (int)(random.random() * (TILES_WIDTH * TILE_SIZE))
+			y = (int)(random.random() * (TILES_WIDTH * TILE_SIZE)) 
 			obj = Collision.getObjectAt(Terrain.List, x, y)
 			if obj != None:
 				c.setTarget(obj, grid)

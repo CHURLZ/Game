@@ -20,18 +20,23 @@ class builder:
 
 	@staticmethod
 	def buildWall(x, y):
-		if builder.initBuild:
-			builder.buildTo = Collision.getObjectAt(Terrain.List, x, y)
-			builder.buildPlan = builder.calculatePath(builder.buildFrom, builder.buildTo, Terrain.List)
-			if builder.buildTo == None:
-				builder.buildPlan = None
-			if builder.buildPlan != None:
-				for tile in builder.buildPlan:
+		if not builder.initBuild:
+			return
+
+		builder.buildTo = Collision.getObjectAt(Terrain.List, x, y)
+		builder.buildPlan = builder.calculatePath(builder.buildFrom, builder.buildTo, Terrain.List)
+		if builder.buildTo == None:
+			builder.buildPlan = None
+		if builder.buildPlan != None:
+			for tile in builder.buildPlan:
+				if tile.buildable:
 					tile.image = images.brickHori
 					tile.default_image = tile.image
 					tile.walkable = False
 		builder.initBuild = False
 		builder.builtSinceLastLoop = True
+
+
 	@staticmethod
 	def destroyWall(x, y):
 		try:
@@ -173,3 +178,11 @@ class builder:
 			obj = Collision.getObjectAt(objList, current.rect.x + 1, current.rect.y + current.height + 1)	
 
 		return obj
+
+		@staticmethod
+		def getRoom(x, y):
+			s = Collision.getObjectAt(Terrain.List, 50, 100)
+			room = builder.floodRoom(s, Terrain.List)
+			return room
+			#for r in room:
+			#	r.image = images.grayScaleFloor

@@ -41,7 +41,6 @@ class God():
 		self.cameraX += self.cameraSpeedX
 		self.cameraY += self.cameraSpeedY
 
-
 	@staticmethod
 	def getCamera():
 		return {CAMERA_X, CAMERA_Y}

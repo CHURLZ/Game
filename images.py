@@ -45,3 +45,4 @@ truck = pygame.image.load("img/truck.png")
 
 # GUI
 panel = pygame.image.load("img/gui/gui_action_panel.png")
+path = panel = pygame.image.load("img/floor/BlueFloorPathTint.png")

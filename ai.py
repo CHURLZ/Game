@@ -77,7 +77,6 @@ class AI:
 			if current not in came_from:
 				return None 
 			current = came_from[current]
-			# path.append((current[0] * 30, current[1] * 30))
 			path.append(current)
 		return path
 
