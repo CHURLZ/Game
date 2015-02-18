@@ -1,5 +1,4 @@
-import pygame, sys, math, random, time
-import images
+import pygame, sys, math, random, time, images
 from classes import *
 from gui import *
 from maps import *
@@ -10,6 +9,7 @@ from God import *
 
 pygame.init()
 pygame.display.init()
+
 
 t1 = time.clock() * 1000
 # SETTINGS
@@ -32,16 +32,17 @@ totalFrames = 0
 # SETTINGS
 
 # TERRAIN
+
 TILE_SIZE = 30
-TILES_WIDTH = 42
-TILES_HEIGHT = 24
+TILES_WIDTH = 20
+TILES_HEIGHT = 15
 matrix = [[0 for i in xrange(TILES_WIDTH)] for i in xrange(TILES_HEIGHT)]
 matrix = loadMap(matrix)
 
 # matrix = createMap(matrix)
 generateMap(matrix)
 #TERRAIN
-
+print Terrain.List.sprites
 # AI
 grid = GridWithWeights(matrix)
 # AI
@@ -53,7 +54,7 @@ print "Startup took: " + str((time.clock() * 1000) - t1)
 god = God()
 
 #for i in xrange(1, 3):
-#	Customer(150, 150, 30, 30, images.customer)
+c = Customer(150, 150, 30, 30, images.customer)
 
 Truck(1920, 495, 60, 30, images.truck)
 
@@ -80,9 +81,10 @@ while True:
 		x = (int)(random.random() * SCREEN_WIDTH)
 		y = (int)(random.random() * SCREEN_HEIGHT)
 
-		obj = Collision.getObjectAt(Terrain.List, x, y)
-		if obj != None and c.targetSet == False:
-			c.setTarget(obj, grid)
+		if not c.targetSet:
+			obj = Collision.getObjectAt(Terrain.List, x, y)
+			if obj != None:
+				c.setTarget(obj, grid)
 
 	#LOGIC
 	for tile in Terrain.List:

@@ -33,54 +33,50 @@ def generateMap(matrix):
 	for i, line in enumerate(matrix):
 		for j, item in enumerate(matrix[i]):
 			if(matrix[i][j] == 0):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickVert, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.brickVert, False)
 			if(matrix[i][j] == 1):
-				t = BlueFloor((j * TILE_SIZE), i * TILE_SIZE)
+				t = BlueFloor((j * TILE_SIZE), i * TILE_SIZE, (j, i))
 				# t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, "img/BlueFloor.png", True)
 			if(matrix[i][j] == 2):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickVert, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.brickVert, False)
 			if(matrix[i][j] == 3):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickHori, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.brickHori, False)
 			if(matrix[i][j] == 4):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickTopLeftCorner, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.brickTopLeftCorner, False)
 			if(matrix[i][j] == 5):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickTopRightCorner, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.brickTopRightCorner, False)
 			if(matrix[i][j] == 6):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickBottomLeftCorner, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.brickBottomLeftCorner, False)
 			if(matrix[i][j] == 7):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickBottomRightCorner, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.brickBottomRightCorner, False)
 			if(matrix[i][j] == 8):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickHorizLeftEnd, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.brickHorizLeftEnd, False)
 			if(matrix[i][j] == 9):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickHorizRightEnd, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.brickHorizRightEnd, False)
 			if(matrix[i][j] == 10):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickVertTopEnd, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.brickVertTopEnd, False)
 			if(matrix[i][j] == 11):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickVertBottomEnd, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.brickVertBottomEnd, False)
 			if(matrix[i][j] == 12):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickIntersection, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.brickIntersection, False)
 			if(matrix[i][j] == 13):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.woodenDoors, True)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.woodenDoors, True)
 			if(matrix[i][j] == 14):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickTopConnection, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.brickTopConnection, False)
 			if(matrix[i][j] == 15):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.brickBottomConnection, False)
-			
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.brickBottomConnection, False)
 			if(matrix[i][j] == 16):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadMidLeft, False, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.roadMidLeft, False, False)
 			if(matrix[i][j] == 17):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadMidMid, False, False)
-
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.roadMidMid, False, False)
 			if(matrix[i][j] == 18):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.road, False, False)
-
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.road, False, False)
 			if(matrix[i][j] == 19):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadBottomLeft, False, False)
-
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.roadBottomLeft, False, False)
 			if(matrix[i][j] == 20):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.roadTopLeft, False, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.roadTopLeft, False, False)
 			if(matrix[i][j] == 21):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, TILE_SIZE, TILE_SIZE, images.sidewalk, True, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.sidewalk, True, False)
 
 class Grid(object):
 	def __init__(self, matrix):
@@ -99,9 +95,7 @@ class Grid(object):
 
 		for tile in tiles:
 			if not tile.walkable:
-				x = tile.rect.x / TILE_SIZE
-				y = tile.rect.y / TILE_SIZE
-
+				(x, y) = tile.gridPos
 				self.walls.append((x, y))
 
 				matrix[y][x] = 0
@@ -110,49 +104,48 @@ class Grid(object):
 			
 
 	def orientWalls(self, matrix, terrainList, cameraX, cameraY):
-		for y in range(self.height + 1):
-			for x in range(self.width + 1):
 
-				tile = Collision.getObjectAt(terrainList, x * TILE_SIZE + cameraX + 1, y * TILE_SIZE + cameraY + 1)
-				if not tile.walkable and tile.buildable:
+		for tile in terrainList:
+			if not tile.walkable and tile.buildable:
+				count = self.countAdjacentWalls(matrix, tile.gridPos)
+
+				if count == 0:
+					tile.image = images.brickSingle
+				elif count == 1:
+					tile.image = images.brickVertBottomEnd
+				elif count == 2:
+					tile.image = images.brickHorizLeftEnd
+				elif count == 3:
+					tile.image = images.brickBottomLeftCorner
+				elif count == 4:
+					tile.image = images.brickVertTopEnd
+				elif count == 5:
+					tile.image = images.brickVert
+				elif count == 6:
+					tile.image = images.brickTopLeftCorner
+				elif count == 7:
+					tile.image = images.brickRightConnection
+				elif count == 8:
+					tile.image = images.brickHorizRightEnd
+				elif count == 9:
+					tile.image = images.brickBottomRightCorner
+				elif count == 10:
+					tile.image = images.brickHori
+				elif count == 11:
+					tile.image = images.brickTopConnection
+				elif count == 12:
+					tile.image = images.brickTopRightCorner
+				elif count == 13:
+					tile.image = images.brickLeftConnection
+				elif count == 14:
+					tile.image = images.brickBottomConnection
+				elif count == 15:
+					tile.image = images.brickIntersection
+				tile.default_image = tile.image
+
 
 				
-					count = self.countAdjacentWalls(matrix, (x + (cameraX / TILE_SIZE), y + (cameraY / TILE_SIZE)))
-
-					if count == 0:
-						tile.image = images.brickSingle
-					elif count == 1:
-						tile.image = images.brickVertBottomEnd
-					elif count == 2:
-						tile.image = images.brickHorizLeftEnd
-					elif count == 3:
-						tile.image = images.brickBottomLeftCorner
-					elif count == 4:
-						tile.image = images.brickVertTopEnd
-					elif count == 5:
-						tile.image = images.brickVert
-					elif count == 6:
-						tile.image = images.brickTopLeftCorner
-					elif count == 7:
-						tile.image = images.brickRightConnection
-					elif count == 8:
-						tile.image = images.brickHorizRightEnd
-					elif count == 9:
-						tile.image = images.brickBottomRightCorner
-					elif count == 10:
-						tile.image = images.brickHori
-					elif count == 11:
-						tile.image = images.brickTopConnection
-					elif count == 12:
-						tile.image = images.brickTopRightCorner
-					elif count == 13:
-						tile.image = images.brickLeftConnection
-					elif count == 14:
-						tile.image = images.brickBottomConnection
-					elif count == 15:
-						tile.image = images.brickIntersection
-					tile.default_image = tile.image
-
+					
 	def countAdjacentWalls(self, matrix, (x, y)):
 		count = 0
 

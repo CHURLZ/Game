@@ -5,6 +5,8 @@ import images
 from collision import *
 from ai import AI
 from God import *
+
+TILE_SIZE = 30
 WHITE = (255, 255, 255, 255)
 LIGHT_GRAY = (170, 170, 170, 255)
 DARK_GRAY = (85, 85, 85, 255)
@@ -44,11 +46,11 @@ class BaseClass(pygame.sprite.Sprite):
 		self.centerY = self.rect.y + (height / 2)
 
 	def motion(self, x, y):
-		dX = self.rect.x + x
-		dY = self.rect.y + y
+		# dX = self.rect.x - x
+		# dY = self.rect.y - y
 
-		self.rect.x = dX
-		self.rect.y = dY
+		self.rect.x += x
+		self.rect.y += y
 
 		self.walkX = self.rect.x + (self.width/2)
 		self.walkY = self.rect.y + self.height
@@ -176,10 +178,10 @@ class Customer(BaseClass):
 		Customer.List.add(self)
 
 	def getNextTile(self):
-		(nextDestx, nextDesty) = self.path.pop()
+		(x, y) = self.path.pop()
 
 		for obj in Terrain.List:
-			if obj.rect.x == (nextDestx * 30)+self.cX and obj.rect.y == (nextDesty * 30)+self.cY:
+			if obj.gridPos == (x, y):
 				if obj.walkable == False or obj == None:
 					self.targetSet = False
 					return None
@@ -190,42 +192,24 @@ class Customer(BaseClass):
 			if Collision.contains(obj, self.walkX, self.walkY):
 				return obj
 
-	def setTarget(self, x, y):
-		self.targetX = x
-		self.targetY = y
-		self.targetSet = True
-
 	def setTarget(self, obj, grid):
-		self.targetTile = obj
-		self.targetX = obj.rect.x # for later
-		self.targetY = obj.rect.y # for later
+		if obj:
+			self.targetTile = obj
+			
+			if obj.walkable == False:
+				return
 
-		if obj.walkable == False:
-			return
+			self.targetSet = True
+			self.path = self.getPath(self.targetTile, grid)
+			if self.path == None:
+				self.targetSet = False
+				return 
 
-		self.targetSet = True
-		self.path = self.getPath(self.targetTile, grid)
-		if self.path == None:
-			self.targetSet = False
-			return 
-
-		# path.reverse()
-		# for tile in path:
-		# 	self.path.put(tile)
-
-		self.nextTile = self.getNextTile()
+			self.nextTile = self.getNextTile()
 
 	def motion(self, x, y):
-		dX = self.rect.x + x
-		dY = self.rect.y + y
-
-		self.cX = x # CAMERA POS
-		self.cY = y
-
-		self.rect.x = dX
-		self.rect.y = dY
-		self.rect.x += self.xSpeed
-		self.rect.y += self.ySpeed
+		self.rect.x += self.xSpeed + x
+		self.rect.y += self.ySpeed + y
 
 		self.walkX = self.rect.x + (self.width/2)
 		self.walkY = self.rect.y + self.height
@@ -268,9 +252,9 @@ class Customer(BaseClass):
 
 	def getPath(self, goalTile, grid):
 		self.currentTile = self.getCurrentTile()
-		start = (self.currentTile.rect.x / 30, self.currentTile.rect.y / 30)
-		goal = (goalTile.rect.x / 30, goalTile.rect.y / 30)
-		#hardcoded val 30 to variable PLIIIIZ
+		start = (self.currentTile.rect.x / TILE_SIZE, self.currentTile.rect.y / TILE_SIZE)
+		goal = (goalTile.rect.x / TILE_SIZE, goalTile.rect.y / TILE_SIZE)
+
 		parents, cost = AI.calculatePath(grid, start, goal)
 
 		return AI.reconstructPath(parents, start, goal)
@@ -278,6 +262,7 @@ class Customer(BaseClass):
 	def navigate(self):
 		self.state = self.WALKING
 		targetXReached, targetYReached = False, False
+
 		if self.walkX < self.nextTile.rect.x+(self.nextTile.width/2):
 			self.xSpeed = self.movementSpeed
 		elif self.walkX > self.nextTile.rect.x+(self.nextTile.width/2):
@@ -303,9 +288,10 @@ class Customer(BaseClass):
 
 class Terrain(BaseClass):
 	List = pygame.sprite.Group()
-	def __init__(self, x, y, width, height, image_string, walkable, buildable = True, palette=None):
+	def __init__(self, x, y, gridPos, width, height, image_string, walkable, buildable = True, palette=None):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.BACKGROUND)
 		Terrain.List.add(self)
+		self.gridPos = gridPos
 		self.walkable = walkable
 		self.buildable = buildable
 		self.default_palette = palette
@@ -327,13 +313,12 @@ class Terrain(BaseClass):
 
 
 class BlueFloor(Terrain):
-	def __init__(self, x, y):
+	def __init__(self, x, y, gridPos):
 		width = 30
 		height = 30
-		image_string = os.path.join("img/floor/", "GrayScaleFloor.png")
 
 		# RGB values are in reverse order, so (Blue, Green, Red)
 		palette = [hexToBGR(0x8EAEE0), hexToBGR(0x5D7394), hexToBGR(0x5D7394), hexToBGR(0x354154)]
 
-		Terrain.__init__(self, x, y, width, height, images.grayScaleFloor, True, True, palette)
+		Terrain.__init__(self, x, y, gridPos, width, height, images.grayScaleFloor, True, True, palette)
 
