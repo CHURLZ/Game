@@ -2,6 +2,7 @@ import random, threading, Queue
 import pygame, math
 import os
 import images
+from sprites import *
 from collision import *
 from ai import AI
 from God import *
@@ -77,17 +78,16 @@ class Box(BaseClass):
 				return obj
 
 class Truck(BaseClass):
+	DRIVING = 0
+	ARRIVED = 1
+	LOADING = 2
+	UNLOADING = 3
+	WAITING = 4
 	List = pygame.sprite.Group()
 	def __init__(self, x, y, width, height, image_string):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.FOREGROUND)
 		Truck.List.add(self)
-		self.DRIVING = 0
-		self.ARRIVED = 1
-		self.LOADING = 2
-		self.UNLOADING = 3
-		self.WAITING = 4
-		self.state = self.DRIVING
-
+		self.state = Truck.DRIVING
 		self.targetSet = True
 		self.targetX = 200
 		self.xDir = 1
@@ -95,11 +95,8 @@ class Truck(BaseClass):
 		self.movementSpeed, self.maxSpeed = 2, 5
 
 	def motion(self, x, y):
-		dX = self.rect.x + x
-		dY = self.rect.y + y
-
-		self.rect.x = dX
-		self.rect.y = dY
+		self.rect.x += x
+		self.rect.y += y
 
 		self.xSpeed += self.acceleration
 		self.xSpeed *= .9
@@ -131,6 +128,7 @@ class Truck(BaseClass):
 		self.state = self.DRIVING
 		if self.walkX < self.targetX:
 			self.acceleration = 0
+			targetXReached = True
 		elif self.walkX > self.targetX:
 			self.acceleration = -self.movementSpeed
 		else:
@@ -138,18 +136,18 @@ class Truck(BaseClass):
 			self.acceleration = 0
 
 		if targetXReached:
-			self.state = self.ARRIVED
+			self.state = Truck.UNLOADING
+			self.xSpeed = 0
 			self.targetSet = False
 
 class Customer(BaseClass):
 	List = pygame.sprite.Group()
 	def __init__(self, x, y, width, height, image_string):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.FOREGROUND)
+		Customer.List.add(self)
 		#MOTION
 		self.xSpeed, self.ySpeed = 0, 0
 		self.movementSpeed, self.xDir, self.yDir = 3, 1, 1
-		self.cX = 0
-		self.cY = 0
 
 		#INTERACTION
 		self.targetX, self.targetY = 0, 0
@@ -168,14 +166,11 @@ class Customer(BaseClass):
 		self.WALKING = 1
 		self.state = self.STANDING
 
-		employee_1 = images.employee_1
-		employee_1.set_clip(pygame.Rect(0, 0, 30, 30)) #Locate the sprite you want
-		self.employee_front = employee_1.subsurface(employee_1.get_clip()) #Extract the sprite you want
-		employee_1.set_clip(pygame.Rect(30, 0, 30, 30)) #Locate the sprite you want
-		self.employee_side = employee_1.subsurface(employee_1.get_clip())
-		employee_1.set_clip(pygame.Rect(60, 0, 30, 30)) #Locate the sprite you want
-		self.employee_back = employee_1.subsurface(employee_1.get_clip())
-		Customer.List.add(self)
+		img = sprite.getSpriteSheet(images.employee_1, (0,0,30,30), 3)
+		self.sprite_front = img[0]
+		self.sprite_side = img[1]
+		self.sprite_back = img[2]
+		
 
 	def getNextTile(self):
 		(x, y) = self.path.pop()
@@ -204,12 +199,6 @@ class Customer(BaseClass):
 				self.targetSet = False
 				return 
 
-			for p in self.path:
-				for obj in Terrain.List:
-					(x, y) = p
-					if obj.gridPos == (x, y):
-						obj.image = images.path
-
 			self.nextTile = self.getNextTile()
 
 	def motion(self, x, y):
@@ -219,24 +208,22 @@ class Customer(BaseClass):
 		self.walkX = self.rect.x + (self.width/2)
 		self.walkY = self.rect.y + self.height
 
-		self.cX += x
-		self.cY += y
-
 	def animate(self, state):	
 		img = "img/customer/customer_1_front.png"
 
 		if state == self.WALKING:
-			img = self.employee_side
+			img = self.sprite_side
 			if self.yDir == -1:
-				img = self.employee_back
+				img = self.sprite_back
 			self.image = img
 			if self.xDir == 1:
 				self.image = pygame.transform.flip(self.image, True, False)
 
 		elif state == self.STANDING:
-			img = self.employee_front
+			img = self.sprite_front
+
 			if self.yDir == -1 :
-				img = self.employee_back
+				img = self.sprite_back
 			self.image = img
 
 	def update(self):
@@ -263,11 +250,9 @@ class Customer(BaseClass):
 		if self.currentTile == None:
 			print "~error: Current tile is none"
 			return
-		else:
-			self.currentTile.image = images.removePath
 
-		start = ((self.currentTile.rect.x - self.cX)/ TILE_SIZE, (self.currentTile.rect.y - self.cY) / TILE_SIZE)
-		goal = (goalTile.rect.x / TILE_SIZE, goalTile.rect.y / TILE_SIZE)
+		start = self.currentTile.gridPos
+		goal = goalTile.gridPos
 
 		parents, cost = AI.calculatePath(grid, start, goal)
 
@@ -296,7 +281,6 @@ class Customer(BaseClass):
 		if targetXReached and targetYReached:
 			if self.path:
 				self.nextTile = self.getNextTile()
-				self.nextTile.image = images.buildPath
 			else:
 				self.state = self.STANDING
 				self.targetSet = False
@@ -309,7 +293,6 @@ class Terrain(BaseClass):
 		self.gridPos = gridPos
 		self.walkable = walkable
 		self.buildable = buildable
-		self.default_palette = palette
 
 		if palette:
 			self.drawPalette(palette, width, height)
@@ -325,7 +308,6 @@ class Terrain(BaseClass):
 					self.image.set_at((x, y), palette[2])
 				elif self.image.get_at((x, y)) == BLACK:
 					self.image.set_at((x, y), palette[3])
-
 
 class BlueFloor(Terrain):
 	def __init__(self, x, y, gridPos):

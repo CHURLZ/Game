@@ -3,7 +3,7 @@ class God():
 	cameraY = 0
 	
 	CAMERA_SPEED_NORMAL = 5
-	CAMERA_SPEED_FAST = 10
+	CAMERA_SPEED_FAST = 15
 	cameraSpeed = CAMERA_SPEED_NORMAL
 	cameraSpeedX = 0
 	cameraSpeedY = 0

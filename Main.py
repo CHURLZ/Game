@@ -41,13 +41,11 @@ matrix = loadMap(matrix)
 generateMap(matrix)
 #TERRAIN
 
-
 # AI
 grid = GridWithWeights(matrix)
 # AI
 
 # MISC
-print "Startup took: " + str((time.clock() * 1000) - t1)
 # MISC
 
 # UNITS
@@ -61,7 +59,7 @@ Truck(1920, 495, 60, 30, images.truck)
 #panel = ActionPanel(0, 10, 60, 400, images.panel)
 # UNITS
 
-
+print "Startup took: " + str((time.clock() * 1000) - t1)
 
 # ---------- MAIN GAME LOOP -------------
 while True:
@@ -72,7 +70,7 @@ while True:
 	for c in Customer.List:
 		if not c.targetSet:
 			x = (int)(random.random() * (TILES_WIDTH * TILE_SIZE))
-			y = (int)(random.random() * (TILES_WIDTH * TILE_SIZE)) 
+			y = (int)(random.random() * (TILES_HEIGHT * TILE_SIZE)) 
 			obj = Collision.getObjectAt(Terrain.List, x, y)
 			if obj != None:
 				c.setTarget(obj, grid)
@@ -88,6 +86,13 @@ while True:
 	for t in Truck.List:
 		t.motion(god.cameraSpeedX, god.cameraSpeedY)
 		t.update()
+		if t.state == Truck.UNLOADING:
+			for c in Customer.List:
+				x = (int)(t.walkX)
+				y = (int)(t.walkY)
+				obj = Collision.getObjectAt(Terrain.List, x, y)
+				if obj != None:
+					c.setTarget(obj, grid)
 
 	tX, tY = pygame.mouse.get_pos()
 	x, y = tX + god.cameraSpeedX, tY + god.cameraSpeedY
@@ -100,9 +105,8 @@ while True:
 		builder.builtSinceLastLoop = False
 		for c in Customer.List:
 			c.setTarget(c.targetTile, grid)	
-
-
 	#LOGIC
+
 
 	#COLLISION 
 

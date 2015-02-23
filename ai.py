@@ -64,7 +64,6 @@ class AI:
 
 		# AI.total += (time.clock() * 1000) - startTime
 		# AI.count += 1
-
 		#print "Average time: " + str(AI.total / AI.count) + "ms"
 
 		return came_from, cost_so_far
