@@ -36,15 +36,15 @@ def generateMap(matrix):
 			if(matrix[i][j] == 1):
 				t = BlueFloor((j * TILE_SIZE), i * TILE_SIZE, (j, i))
 			if(matrix[i][j] == 16):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.roadMidLeft, False, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.roadMidLeft, True, False)
 			if(matrix[i][j] == 17):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.roadMidMid, False, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.roadMidMid, True, False)
 			if(matrix[i][j] == 18):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.road, False, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.road, True, False)
 			if(matrix[i][j] == 19):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.roadBottomLeft, False, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.roadBottomLeft, True, False)
 			if(matrix[i][j] == 20):
-				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.roadTopLeft, False, False)
+				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.roadTopLeft, True, False)
 			if(matrix[i][j] == 21):
 				t = Terrain((j * TILE_SIZE), i * TILE_SIZE, (j, i), TILE_SIZE, TILE_SIZE, images.sidewalk, True, False)
 
