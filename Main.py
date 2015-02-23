@@ -51,9 +51,9 @@ grid = GridWithWeights(matrix)
 # UNITS
 god = God()
 
-#for i in xrange(1, 3):
-Customer(150, 150, 30, 30, images.customer)
-rooms = []
+for i in xrange(1, 10):
+	c = Customer(150, 150, 30, 30, images.customer)
+
 Truck(1920, 495, 60, 30, images.truck)
 
 panel = ActionPanel(0, 10, 60, 400, images.panel)
@@ -79,8 +79,8 @@ while True:
 			x = (int)(random.random() * (TILES_WIDTH * TILE_SIZE))
 			y = (int)(random.random() * (TILES_HEIGHT * TILE_SIZE)) 
 			obj = Collision.getObjectAt(Terrain.List, x, y)
-			if obj != None:
-				c.setTarget(obj, grid)
+			if obj != None and not c.isBusy:
+				c.setTargetTile(obj, grid)
 
 		c.motion(god.cameraX, god.cameraY)
 		c.update()
@@ -90,11 +90,15 @@ while True:
 		t.update()
 		if t.state == Truck.UNLOADING:
 			for c in Customer.List:
-				x = (int)(t.walkX)
-				y = (int)(t.walkY)
-				obj = Collision.getObjectAt(Terrain.List, x, y)
-				if obj != None:
-					c.setTarget(obj, grid)
+				if not c.isBusy:
+					r = random.random()*1
+					x = (int)(t.walkX) + (TILE_SIZE * r)
+					y = (int)(t.walkY)
+					obj = Collision.getObjectAt(Terrain.List, x, y)
+					if obj != None:
+						c.targetSet = False
+						c.setTargetTile(obj, grid)
+						c.isBusy = True
 
 	tX, tY = pygame.mouse.get_pos()
 	x, y = tX + god.cameraX, tY + god.cameraY
@@ -106,7 +110,7 @@ while True:
 		grid.orientWalls(matrix, Terrain.List, god.cameraX, god.cameraY)
 		builder.builtSinceLastLoop = False
 		for c in Customer.List:
-			c.setTarget(c.targetTile, grid)	
+			c.setTargetTile(c.targetTile, grid)	
 	#LOGIC
 
 

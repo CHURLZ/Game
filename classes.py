@@ -102,8 +102,8 @@ class Truck(BaseClass):
 		if abs(self.xSpeed) > self.maxSpeed:
 			self.xSpeed = self.maxSpeed * self.xDir
 
-		# tX = self.targetX + x
-		# self.targetX = tX
+		self.rect.x += self.xSpeed
+		self.rect.y += self.ySpeed
 
 		self.walkX = self.rect.x + (self.width/2)
 		self.walkY = self.rect.y + self.height
@@ -157,6 +157,9 @@ class Customer(BaseClass):
 		self.nextTile = None
 		self.path = Queue.Queue()
 
+		#TASKING
+		self.isBusy = False
+
 		#ANIMATION
 		self.STANDING = 0
 		self.WALKING = 1
@@ -171,7 +174,6 @@ class Customer(BaseClass):
 
 	def getNextTile(self):
 		(x, y) = self.path.pop()
-
 		for obj in Terrain.List:
 			if obj.gridPos == (x, y):
 				if obj.walkable == False or obj == None:
@@ -184,7 +186,7 @@ class Customer(BaseClass):
 			if Collision.contains(obj, self.rect.x + self.width, self.rect.y + self.height):
 				return obj
 
-	def setTarget(self, obj, grid):
+	def setTargetTile(self, obj, grid):
 		if not obj or not obj.walkable:
 			return
 		else:
