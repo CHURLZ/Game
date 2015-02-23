@@ -314,6 +314,12 @@ class Terrain(BaseClass):
 				elif self.image.get_at((x, y)) == BLACK:
 					self.image.set_at((x, y), palette[3])
 
+	@staticmethod
+	def getTileAtGridPos(pos):
+		for tile in Terrain.List:
+			if tile.gridPos == pos:
+				return tile
+
 class BlueFloor(Terrain):
 	def __init__(self, x, y, gridPos):
 		width = 30

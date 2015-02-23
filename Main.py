@@ -76,10 +76,10 @@ while True:
 
 	for c in Customer.List:
 		if not c.targetSet:
-			x = (int)(random.random() * (TILES_WIDTH * TILE_SIZE))
-			y = (int)(random.random() * (TILES_HEIGHT * TILE_SIZE)) 
-			obj = Collision.getObjectAt(Terrain.List, x, y)
-			if obj != None and not c.isBusy:
+			x = ((int)(random.random() * TILES_WIDTH))
+			y = ((int)(random.random() * TILES_HEIGHT))
+			obj = Terrain.getTileAtGridPos((x, y))
+			if obj != None and obj.walkable and not c.isBusy:
 				c.setTargetTile(obj, grid)
 
 		c.motion(god.cameraX, god.cameraY)
@@ -100,8 +100,8 @@ while True:
 						c.setTargetTile(obj, grid)
 						c.isBusy = True
 
-	tX, tY = pygame.mouse.get_pos()
-	x, y = tX + god.cameraX, tY + god.cameraY
+	x, y = pygame.mouse.get_pos()
+	
 	builder.drawBuildPath(x, y)
 	builder.drawRemovePath(x, y)
 
