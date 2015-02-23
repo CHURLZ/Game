@@ -1,6 +1,6 @@
-import pygame, sys
+import gui, pygame, sys
 from builder import *
-
+from zone import *
 
 def process(god):
 	for event in pygame.event.get():  
@@ -9,24 +9,20 @@ def process(god):
 			sys.exit() 	
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
-			tX, tY = pygame.mouse.get_pos()
-			x, y = tX + god.cameraSpeedX, tY + god.cameraSpeedY
-			if event.button == 1:
-				builder.initBuild = True
-				builder.buildFrom = Collision.getObjectAt(Terrain.List, x, y)
-			if event.button == 3:
-				builder.initRemove = True
-				builder.buildFrom = Collision.getObjectAt(Terrain.List, x, y)
+			x, y = pygame.mouse.get_pos()
+
+			clickedTile = Collision.getObjectAt(gui.GUIBaseClass.allSprites, x, y)
+			if clickedTile == None:
+				builder.onMouseDown(x, y, event)
 
 		if event.type == pygame.MOUSEBUTTONUP:
-				tX, tY = pygame.mouse.get_pos()
-				x, y = tX + god.cameraSpeedX, tY + god.cameraSpeedY
+				x, y = pygame.mouse.get_pos()
 
-				if event.button == 1:
-					builder.buildWall(x, y)
-					
-				elif(event.button == 3):
-					builder.destroyWall(x, y)
+				builder.onMouseRelease(x, y, event)
+
+				button = Collision.getObjectAt(gui.ActionPanel.buttons, x, y) 
+				if button:
+					button.onClick(builder)
 
 
 		if event.type == pygame.KEYDOWN:

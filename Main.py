@@ -6,6 +6,7 @@ from builder import *
 from ai import AI
 from process import *
 from God import *
+from zone import *
 
 pygame.init()
 pygame.display.init()
@@ -24,9 +25,8 @@ else:
 	FLAGS = pygame.DOUBLEBUF
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), FLAGS, 32)
-screen.set_alpha(None)
 clock = pygame.time.Clock()
-FPS = 40
+FPS = 50
 fiveSecondinterval = FPS * 5
 totalFrames = 0
 # SETTINGS
@@ -54,13 +54,12 @@ print "Startup took: " + str((time.clock() * 1000) - t1)
 god = God()
 
 #for i in xrange(1, 3):
-c = Customer(150, 150, 30, 30, images.customer)
-
+Customer(150, 150, 30, 30, images.customer)
+rooms = []
 Truck(1920, 495, 60, 30, images.truck)
 
-#panel = ActionPanel(0, 10, 60, 400, images.panel)
+panel = ActionPanel(0, 10, 60, 400, images.panel)
 # UNITS
-
 
 
 # ---------- MAIN GAME LOOP -------------
@@ -68,6 +67,13 @@ while True:
 	totalFrames += 1
 	process(god)	
 	god.update()
+
+	#LOGIC
+	for zone in Terrain.zones:
+		zone.update()
+
+	for tile in Terrain.List:
+		tile.motion(god.cameraX, god.cameraY)
 
 	for c in Customer.List:
 		if not c.targetSet:
@@ -77,20 +83,15 @@ while True:
 			if obj != None:
 				c.setTarget(obj, grid)
 
-	#LOGIC
-	for tile in Terrain.List:
-		tile.motion(god.cameraSpeedX, god.cameraSpeedY)
-
-	for c in Customer.List:
-		c.motion(god.cameraSpeedX, god.cameraSpeedY)
+		c.motion(god.cameraX, god.cameraY)
 		c.update()
 
 	for t in Truck.List:
-		t.motion(god.cameraSpeedX, god.cameraSpeedY)
+		t.motion(god.cameraX, god.cameraY)
 		t.update()
 
 	tX, tY = pygame.mouse.get_pos()
-	x, y = tX + god.cameraSpeedX, tY + god.cameraSpeedY
+	x, y = tX + god.cameraX, tY + god.cameraY
 	builder.drawBuildPath(x, y)
 	builder.drawRemovePath(x, y)
 

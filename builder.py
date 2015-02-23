@@ -1,4 +1,5 @@
 import pygame, math, Queue, time
+from zone import *
 from collision import *
 from classes import Terrain
 import images
@@ -9,6 +10,14 @@ class builder:
 	UP = "up"
 	DOWN = "down"
 
+
+	# States
+	INACTIVE = 0
+	WALL = 1
+	ZONE = 2
+
+	state = 0
+
 	# BUILD
 	initBuild = False
 	buildFrom = None
@@ -17,6 +26,39 @@ class builder:
 	initRemove = False
 	builtSinceLastLoop = True
 	# BUILD
+
+	@staticmethod
+	def onMouseDown(x, y, event):
+		if builder.state == builder.INACTIVE:
+			return
+		elif builder.state == builder.WALL:
+			if event.button == 1:
+				builder.initBuild = True
+				builder.buildFrom = Collision.getObjectAt(Terrain.List, x, y)
+			if event.button == 3:
+				builder.initRemove = True
+				builder.buildFrom = Collision.getObjectAt(Terrain.List, x, y)
+
+		elif builder.state == builder.ZONE:
+			Terrain.zones.append(Zone((x, y)))
+
+
+	@staticmethod
+	def onMouseRelease(x, y, event):
+		if builder.state == builder.INACTIVE:
+			return
+		elif builder.state == builder.WALL:
+			if event.button == 1:
+				builder.buildWall(x, y)
+					
+			elif event.button == 3:
+			  	builder.destroyWall(x, y)
+		elif builder.state == builder.ZONE:
+			for zone in Terrain.zones:
+					if zone.inLimbo:
+						zone.onMouseRelease(Terrain.List, (x, y))
+
+
 
 	@staticmethod
 	def buildWall(x, y):

@@ -38,6 +38,8 @@ class BaseClass(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 		self.rect.x = x
 		self.rect.y = y
+		self.gridX = x
+		self.gridY = y
 		self.width = width
 		self.height = height
 		self.walkX = x + (width / 2)
@@ -46,11 +48,8 @@ class BaseClass(pygame.sprite.Sprite):
 		self.centerY = self.rect.y + (height / 2)
 
 	def motion(self, x, y):
-		# dX = self.rect.x - x
-		# dY = self.rect.y - y
-
-		self.rect.x += x
-		self.rect.y += y
+		self.rect.x = self.gridX + x
+		self.rect.y = self.gridY + y
 
 		self.walkX = self.rect.x + (self.width/2)
 		self.walkY = self.rect.y + self.height
@@ -95,22 +94,16 @@ class Truck(BaseClass):
 		self.movementSpeed, self.maxSpeed = 2, 5
 
 	def motion(self, x, y):
-		dX = self.rect.x + x
-		dY = self.rect.y + y
-
-		self.rect.x = dX
-		self.rect.y = dY
+		self.rect.x = self.gridX + x + self.xSpeed
+		self.rect.y = self.gridY + y + self.ySpeed
 
 		self.xSpeed += self.acceleration
 		self.xSpeed *= .9
 		if abs(self.xSpeed) > self.maxSpeed:
 			self.xSpeed = self.maxSpeed * self.xDir
 
-		self.rect.x += self.xSpeed
-		self.rect.y += self.ySpeed
-
-		tX = self.targetX + x
-		self.targetX = tX
+		# tX = self.targetX + x
+		# self.targetX = tX
 
 		self.walkX = self.rect.x + (self.width/2)
 		self.walkY = self.rect.y + self.height
@@ -148,8 +141,6 @@ class Customer(BaseClass):
 		#MOTION
 		self.xSpeed, self.ySpeed = 0, 0
 		self.movementSpeed, self.xDir, self.yDir = 3, 1, 1
-		self.cX = 0
-		self.cY = 0
 
 		#INTERACTION
 		self.targetX, self.targetY = 0, 0
@@ -177,6 +168,7 @@ class Customer(BaseClass):
 		self.employee_back = employee_1.subsurface(employee_1.get_clip())
 		Customer.List.add(self)
 
+
 	def getNextTile(self):
 		(x, y) = self.path.pop()
 
@@ -189,7 +181,7 @@ class Customer(BaseClass):
 
 	def getCurrentTile(self):
 		for obj in Terrain.List:
-			if Collision.contains(obj, self.walkX, self.walkY):
+			if Collision.contains(obj, self.rect.x + self.width, self.rect.y + self.height):
 				return obj
 
 	def setTarget(self, obj, grid):
@@ -206,21 +198,17 @@ class Customer(BaseClass):
 
 			for p in self.path:
 				for obj in Terrain.List:
-					(x, y) = p
-					if obj.gridPos == (x, y):
+					if obj.gridPos == p:
 						obj.image = images.path
 
 			self.nextTile = self.getNextTile()
 
 	def motion(self, x, y):
-		self.rect.x += self.xSpeed + x
-		self.rect.y += self.ySpeed + y
+		self.gridX += self.xSpeed
+		self.gridY += self.ySpeed
 
-		self.walkX = self.rect.x + (self.width/2)
-		self.walkY = self.rect.y + self.height
-
-		self.cX += x
-		self.cY += y
+		self.rect.x = self.gridX + x
+		self.rect.y = self.gridY + y
 
 	def animate(self, state):	
 		img = "img/customer/customer_1_front.png"
@@ -266,8 +254,9 @@ class Customer(BaseClass):
 		else:
 			self.currentTile.image = images.removePath
 
-		start = ((self.currentTile.rect.x - self.cX)/ TILE_SIZE, (self.currentTile.rect.y - self.cY) / TILE_SIZE)
-		goal = (goalTile.rect.x / TILE_SIZE, goalTile.rect.y / TILE_SIZE)
+
+		start = (self.currentTile.gridPos[0], self.currentTile.gridPos[1])
+		goal = (goalTile.gridPos[0], goalTile.gridPos[1])
 
 		parents, cost = AI.calculatePath(grid, start, goal)
 
@@ -277,17 +266,17 @@ class Customer(BaseClass):
 		self.state = self.WALKING
 		targetXReached, targetYReached = False, False
 
-		if self.walkX < self.nextTile.rect.x+(self.nextTile.width/2):
+		if self.rect.x < self.nextTile.rect.x:
 			self.xSpeed = self.movementSpeed
-		elif self.walkX > self.nextTile.rect.x+(self.nextTile.width/2):
+		elif self.rect.x > self.nextTile.rect.x:
 			self.xSpeed = -self.movementSpeed
 		else:
 			targetXReached = True
 			self.xSpeed = 0
 
-		if self.walkY < self.nextTile.rect.y+(self.nextTile.height/2):
+		if self.rect.y < self.nextTile.rect.y - self.width / 2:
 			self.ySpeed = self.movementSpeed
-		elif self.walkY > self.nextTile.rect.y+(self.nextTile.height/2):
+		elif self.rect.y > self.nextTile.rect.y - self.width / 2:
 			self.ySpeed = -self.movementSpeed
 		else:
 			targetYReached = True
@@ -303,6 +292,7 @@ class Customer(BaseClass):
 
 class Terrain(BaseClass):
 	List = pygame.sprite.Group()
+	zones = []
 	def __init__(self, x, y, gridPos, width, height, image_string, walkable, buildable = True, palette=None):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.BACKGROUND)
 		Terrain.List.add(self)

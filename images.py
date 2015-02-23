@@ -2,7 +2,7 @@ import pygame
 
 # Floor
 grayScaleFloor = pygame.image.load("img/floor/GrayScaleFloor.png")
-
+greenFloor = pygame.image.load("img/floor/WeirdGreenFloor.png")
 # BUILD
 buildPath = pygame.image.load("img/floor/BlueFloorGreenTint.png")
 removePath = pygame.image.load("img/floor/BlueFloorRedTint.png")
@@ -45,4 +45,6 @@ truck = pygame.image.load("img/truck.png")
 
 # GUI
 panel = pygame.image.load("img/gui/gui_action_panel.png")
-path = panel = pygame.image.load("img/floor/BlueFloorPathTint.png")
+zoneButton = pygame.image.load("img/gui/zoneButton.png")
+wallButton = pygame.image.load("img/gui/wallButton.png")
+path = pygame.image.load("img/floor/BlueFloorPathTint.png")
