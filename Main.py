@@ -81,7 +81,8 @@ while True:
 	for c in Customer.List:
 		if not c.isBusy:
 			if not taskManager.isEmpty():
-				c.task = taskManager.takeTask()
+				t = taskManager.takeTask()
+				c.assignTask(t, grid)
 		if not c.targetSet:
 			x = ((int)(random.random() * TILES_WIDTH))
 			y = ((int)(random.random() * TILES_HEIGHT))

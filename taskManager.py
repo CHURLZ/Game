@@ -6,13 +6,18 @@ class taskManager:
 
 	@staticmethod
 	def addTask(taskType, taskFrom, taskTo, taskObj):
-		taskManager.tasks.put(task(taskType, taskFrom, taskTo, taskObj))
-	
+		newTask = task(taskType, taskFrom, taskTo, taskObj)
+		taskManager.tasks.put(newTask)
+
 	@staticmethod
 	def takeTask():
-		if not isEmpty():
-			return taskManager.tasks.pop()	
+		if not taskManager.isEmpty():
+			t = taskManager.tasks.get()	
+			print "takeTask", t
+			print "takeTask", t.interactFrom
+			return t
+
 	@staticmethod
 	def isEmpty():
-		return len(taskManager.tasks) == 0
+		return taskManager.tasks.empty()
 

@@ -9,8 +9,9 @@ class task:
 	interactionObject = None
 	isDone = False
 
-	def __init__(self, typeOfTask, own, interactFrom=None, interactTo=None, obj=None):
+	def __init__(self, typeOfTask, intFrom, intTo, obj):
 		task = typeOfTask
-		owner = own
-		interactTo = interactTo
-		interactFrom = interactFrom
+		interactFrom = intFrom
+		interactTo = intTo
+		interactionObject = obj
+

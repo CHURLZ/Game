@@ -188,7 +188,13 @@ class Customer(BaseClass):
 		self.sprite_back = img[2]
 		
 
-
+	def assignTask(self, task, grid):
+		self.isBusy = True
+		self.task = task
+		task.owner = self
+		self.setTargetTile(task.interactFrom, grid)
+		#print "task assigned, going to ", task.interactFrom.gridPos
+	
 	def getNextTile(self):
 		(x, y) = self.path.pop()
 		for obj in Terrain.List:
