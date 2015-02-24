@@ -7,15 +7,14 @@ BUTTON_HEIGHT = 30
 class GUIBaseClass(pygame.sprite.Sprite):
 	allSprites = pygame.sprite.OrderedUpdates()
 
-	def __init__(self, x, y, width, height, image, alpha):
+	def __init__(self, x, y, width, height, image):
 		pygame.sprite.Sprite.__init__(self)
 		GUIBaseClass.allSprites.add(self)
-		self.image = image.convert()
-		self.image.set_alpha(alpha)
+		self.image = image
+		self.image.set_alpha(128)
 		self.rect = self.image.get_rect()
 		self.rect.x = x
 		self.rect.y = y
-		self.angle = 0
 		self.width = width
 		self.height = height
 		self.active = False
@@ -61,16 +60,17 @@ class TextBox(GUIBaseClass):
 
 		# Draw Text
 		image.blit(text, ((width - textRect.width) / 2, height / 2 - textRect.height - 2, width, height))
-
+		
 		GUIBaseClass.__init__(self, x, y, width, height, image)
-
 
 
 class ActionPanel(GUIBaseClass):
 	buttons = pygame.sprite.Group()
 	active = None # TO HIGHLIGHT ACTIVE BUTTON
 	def __init__(self, x, y, width, height, image):
-		GUIBaseClass.__init__(self, x, y, width, height, image, 175)
+		image = image.convert()
+		image.set_alpha(100)
+		GUIBaseClass.__init__(self, x, y, width, height, image)
 		self.buttons.add(ZoningButton(self.rect.x + 10, self.rect.y + 20, BUTTON_WIDTH, BUTTON_HEIGHT, images.zoneButton))
 		self.buttons.add(WallingButton(self.rect.x + 10, self.rect.y + BUTTON_HEIGHT + 40, BUTTON_WIDTH, BUTTON_HEIGHT, images.wallButton))
 		active = None
@@ -87,8 +87,9 @@ class ActionPanel(GUIBaseClass):
 
 class ActionButton(ActionPanel):
 	def __init__(self, x, y, width, height, image):
-		GUIBaseClass.__init__(self, x, y, width, height, image, 175)
-		#ActionPanel.buttons.add(self)
+		GUIBaseClass.__init__(self, x, y, width, height, image)
+		image = image.convert()
+		image.set_alpha(175)
 		
 	def onClick(self):
 		ActionPanel.active = self

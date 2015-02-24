@@ -46,7 +46,10 @@ grid = GridWithWeights(matrix)
 # AI
 
 # MISC
-textBox = TextBox(300, 342, "smorblomma", "I am a chunky monkey!")
+textBox = TextBox(300, 342, "smoerblomma", "I am a chunky monkey!")
+textBox = TextBox(400, 342, "smoerblomma", "I am a monkey!")
+textBox = TextBox(100, 322, "smorblomma", "A sixteen holiday!")
+textBox = TextBox(700, 382, "smoerblomma", "I am a chunky monkey!")
 # MISC
 
 
