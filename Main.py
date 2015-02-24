@@ -26,6 +26,7 @@ else:
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), FLAGS, 32)
 clock = pygame.time.Clock()
+pygame.display.set_caption('The Computer Shop Game')
 FPS = 50
 fiveSecondinterval = FPS * 5
 totalFrames = 0
@@ -46,7 +47,9 @@ grid = GridWithWeights(matrix)
 # AI
 
 # MISC
+textBox = TextBox(300, 342, "smorblomma", "I am a chunky monkey!")
 # MISC
+
 
 # UNITS
 god = God()
@@ -127,6 +130,7 @@ while True:
 	BaseClass.backgroundSprites.draw(screen)
 	BaseClass.foregroundSprites.draw(screen)
 	GUIBaseClass.allSprites.draw(screen)
+
 	pygame.display.flip()	
 	#DRAW
 

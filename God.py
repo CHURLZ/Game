@@ -1,5 +1,5 @@
 class God():
-	cameraX = 0
+	cameraX = 100
 	cameraY = 0
 	
 	CAMERA_SPEED_NORMAL = 5
