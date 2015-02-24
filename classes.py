@@ -82,6 +82,7 @@ class Truck(BaseClass):
 	LOADING = 2
 	UNLOADING = 3
 	WAITING = 4
+	EMPTY = 5
 	List = pygame.sprite.Group()
 	def __init__(self, x, y, width, height, image_string):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.FOREGROUND)
@@ -90,20 +91,18 @@ class Truck(BaseClass):
 		self.targetSet = True
 		self.targetX = 200
 		self.xDir = 1
-		self.xSpeed, self.ySpeed, self.acceleration = 0, 0, 0
+		self.xSpeed, self.ySpeed, self.acceleration = 0, 0, 1
 		self.movementSpeed, self.maxSpeed = 2, 5
 
 	def motion(self, x, y):
-		self.rect.x = self.gridX + x + self.xSpeed
-		self.rect.y = self.gridY + y + self.ySpeed
-
 		self.xSpeed += self.acceleration
 		self.xSpeed *= .9
+		self.rect.x = self.gridX + x
+		self.rect.y = self.gridY + y
+		self.gridX += self.xSpeed
+
 		if abs(self.xSpeed) > self.maxSpeed:
 			self.xSpeed = self.maxSpeed * self.xDir
-
-		self.rect.x += self.xSpeed
-		self.rect.y += self.ySpeed
 
 		self.walkX = self.rect.x + (self.width/2)
 		self.walkY = self.rect.y + self.height
@@ -197,11 +196,6 @@ class Customer(BaseClass):
 			if self.path == None:
 				self.targetSet = False
 				return 
-
-			for p in self.path:
-				for obj in Terrain.List:
-					if obj.gridPos == p:
-						obj.image = images.path
 
 			self.nextTile = self.getNextTile()
 

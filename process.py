@@ -26,6 +26,14 @@ def process(god):
 
 
 		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_1:
+				builder.state = builder.ZONE
+			if event.key == pygame.K_2:
+				builder.state = builder.WALL
+			if event.key == pygame.K_3:
+				builder.state = builder.INACTIVE
+			if event.key == pygame.K_4:
+				print 4
 			if event.key == pygame.K_ESCAPE:
 				pygame.quit()
 				sys.exit()

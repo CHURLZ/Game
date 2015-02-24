@@ -7,7 +7,6 @@ class Zone():
 	def __init__(self, startPos):
 		self.tiles = []
 		self.startPos = startPos
-
 		self.inLimbo = True
 
 	def update(self):
@@ -19,7 +18,6 @@ class Zone():
 	def onMouseRelease(self, tiles, endPos):
 		self.setMatrixCoords(endPos)
 		self.setTiles(tiles)
-
 		self.inLimbo = False
 
 	def setTiles(self, tiles):
@@ -27,7 +25,7 @@ class Zone():
 			if tile.walkable and self.__inRange(tile.rect, (self.originX, self.originY), (self.endX, self.endY)):
 				self.tiles.append(tile)
 				tile.image = images.greenFloor
-
+				tile.default_image = tile.image
 
 	def setMatrixCoords(self, endPos):
 		x1, y1 = self.startPos
@@ -53,8 +51,6 @@ class Zone():
 			if self.__inRange(tile.rect, self.startPos, (mouseX, mouseY)):
 				self.tiles.append(tile)
 				tile.image = images.greenFloor
-
-
 
 	def __inRange(self, rect, (x1, y1), (x2, y2)):
 		if x1 < x2:

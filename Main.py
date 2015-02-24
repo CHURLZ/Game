@@ -11,7 +11,6 @@ from zone import *
 pygame.init()
 pygame.display.init()
 
-
 t1 = time.clock() * 1000
 # SETTINGS
 
@@ -54,7 +53,7 @@ god = God()
 for i in xrange(1, 10):
 	c = Customer(150, 150, 30, 30, images.customer)
 
-Truck(1920, 495, 60, 30, images.truck)
+Truck(600, 495, 60, 30, images.truck)
 
 panel = ActionPanel(0, 10, 60, 400, images.panel)
 # UNITS

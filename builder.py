@@ -10,7 +10,6 @@ class builder:
 	UP = "up"
 	DOWN = "down"
 
-
 	# States
 	INACTIVE = 0
 	WALL = 1
@@ -174,7 +173,6 @@ class builder:
 	@staticmethod
 	def floodRoom(start, objList):
 		startTime = time.clock()
-
 		openList = set()
 
 		frontier = Queue.Queue()
@@ -188,13 +186,12 @@ class builder:
 
 		while not frontier.empty():
 			current = frontier.get()
-				
 			for next in builder.getNeighbours(current, objList):
 				if next not in visited and next in openList:
 					visited[next] = current
 					frontier.put(next)
-
 		return visited
+
 	@staticmethod
 	def getNeighbours(obj, objList):
 		left = builder.getAdjacent(obj, builder.LEFT, objList)
@@ -221,10 +218,8 @@ class builder:
 
 		return obj
 
-		@staticmethod
-		def getRoom(x, y):
-			s = Collision.getObjectAt(Terrain.List, 50, 100)
-			room = builder.floodRoom(s, Terrain.List)
-			return room
-			#for r in room:
-			#	r.image = images.grayScaleFloor
+	@staticmethod
+	def getRoom(x, y):
+		s = Collision.getObjectAt(Terrain.List, 50, 100)
+		room = builder.floodRoom(s, Terrain.List)
+		return room			
