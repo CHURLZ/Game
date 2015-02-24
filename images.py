@@ -43,6 +43,9 @@ employee_1 = pygame.image.load("img/customer/sprite_employee_1.png")
 # Truck
 truck = pygame.image.load("img/truck.png")
 
+# MISC
+boxClosed = pygame.image.load("img/box_closed.png")
+
 # GUI
 panel = pygame.image.load("img/gui/gui_action_panel.png")
 zoneButton = pygame.image.load("img/gui/zoneButton.png")

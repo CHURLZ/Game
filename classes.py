@@ -6,6 +6,8 @@ from sprites import *
 from collision import *
 from ai import AI
 from God import *
+from taskManager import *
+from task import *
 
 TILE_SIZE = 30
 WHITE = (255, 255, 255, 255)
@@ -83,11 +85,13 @@ class Truck(BaseClass):
 	UNLOADING = 3
 	WAITING = 4
 	EMPTY = 5
+
 	List = pygame.sprite.Group()
 	def __init__(self, x, y, width, height, image_string):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.FOREGROUND)
 		Truck.List.add(self)
 		self.state = Truck.DRIVING
+		self.cargo = {Box(200, 200, 30, 30, images.boxClosed), Box(300, 200, 30, 30, images.boxClosed)}
 		self.targetSet = True
 		self.targetX = 200
 		self.xDir = 1
@@ -118,6 +122,10 @@ class Truck(BaseClass):
 		else:
 			self.xDir = 0
 
+		for c in self.cargo:
+			c.rect.x = self.rect.x + self.width
+			c.rect.y = self.rect.y
+
 	def navigate(self):
 		targetXReached = False
 		self.state = self.DRIVING
@@ -132,8 +140,16 @@ class Truck(BaseClass):
 
 		if targetXReached:
 			self.state = Truck.UNLOADING
+			for c in self.cargo:
+				taskManager.addTask(task.MOVE_OBJECT, self.getCurrentTile(), Terrain.getTileAtGridPos((50, 100)), c)
 			self.xSpeed = 0
 			self.targetSet = False
+
+	def getCurrentTile(self):
+		for obj in Terrain.List:
+			if Collision.contains(obj, self.rect.x + self.width, self.rect.y + self.height):
+				return obj
+
 
 class Customer(BaseClass):
 	List = pygame.sprite.Group()
@@ -148,6 +164,7 @@ class Customer(BaseClass):
 		self.targetX, self.targetY = 0, 0
 		self.isHolding = False
 		self.holdingObject = None
+		self.textBubble = None
 
 		#PATHFINDING
 		self.targetSet = False
@@ -158,6 +175,7 @@ class Customer(BaseClass):
 
 		#TASKING
 		self.isBusy = False
+		self.task = None
 
 		#ANIMATION
 		self.STANDING = 0
@@ -242,6 +260,9 @@ class Customer(BaseClass):
 			self.yDir = 1
 		else:
 			self.yDir = 0
+
+		if self.textBubble:
+			self.textBubble.update(self.rect.x, self.rect.y, self.width, self.height)
 
 	def getPath(self, goalTile, grid):
 		self.currentTile = self.getCurrentTile()

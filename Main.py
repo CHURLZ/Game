@@ -7,6 +7,7 @@ from ai import AI
 from process import *
 from God import *
 from zone import *
+from taskManager import *
 
 pygame.init()
 pygame.display.init()
@@ -46,10 +47,7 @@ grid = GridWithWeights(matrix)
 # AI
 
 # MISC
-textBox = TextBox(300, 342, "smoerblomma", "I am a chunky monkey!")
-textBox = TextBox(400, 342, "smoerblomma", "I am a monkey!")
-textBox = TextBox(100, 322, "smorblomma", "A sixteen holiday!")
-textBox = TextBox(700, 382, "smoerblomma", "I am a chunky monkey!")
+
 # MISC
 
 
@@ -58,6 +56,7 @@ god = God()
 
 for i in xrange(1, 10):
 	c = Customer(150, 150, 30, 30, images.customer)
+	c.textBubble = TextBox(300, 342, "smoerblomma", "I am a chunky monkey!")
 
 Truck(600, 495, 60, 30, images.truck)
 
@@ -80,6 +79,9 @@ while True:
 		tile.motion(god.cameraX, god.cameraY)
 
 	for c in Customer.List:
+		if not c.isBusy:
+			if not taskManager.isEmpty():
+				c.task = taskManager.takeTask()
 		if not c.targetSet:
 			x = ((int)(random.random() * TILES_WIDTH))
 			y = ((int)(random.random() * TILES_HEIGHT))
@@ -93,17 +95,6 @@ while True:
 	for t in Truck.List:
 		t.motion(god.cameraX, god.cameraY)
 		t.update()
-		if t.state == Truck.UNLOADING:
-			for c in Customer.List:
-				if not c.isBusy:
-					r = random.random()*1
-					x = (int)(t.walkX) + (TILE_SIZE * r)
-					y = (int)(t.walkY)
-					obj = Collision.getObjectAt(Terrain.List, x, y)
-					if obj != None:
-						c.targetSet = False
-						c.setTargetTile(obj, grid)
-						c.isBusy = True
 
 	x, y = pygame.mouse.get_pos()
 	

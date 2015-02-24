@@ -63,6 +63,10 @@ class TextBox(GUIBaseClass):
 		
 		GUIBaseClass.__init__(self, x, y, width, height, image)
 
+	def update(self, x, y, w, h):
+		self.rect.x = x - w * 3 - 10 
+		self.rect.y = y - (20 + h)
+
 
 class ActionPanel(GUIBaseClass):
 	buttons = pygame.sprite.Group()
