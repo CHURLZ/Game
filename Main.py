@@ -8,6 +8,7 @@ from process import *
 from God import *
 from zone import *
 from taskManager import *
+from player import *
 
 pygame.init()
 pygame.display.init()
@@ -53,6 +54,7 @@ grid = GridWithWeights(matrix)
 
 # UNITS
 god = God()
+player = Player(1000)
 
 for i in xrange(1, 10):
 	c = Customer(i*60, 150, 30, 30, images.customer)

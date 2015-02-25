@@ -109,7 +109,6 @@ class WallingButton(ActionButton):
 		ActionPanel.active = self
 		ActionPanel.updatePanel()
 		builder.state = builder.WALL
-		print "WALLING"
 
 class ZoningButton(ActionButton):
 	def __init__(self, x, y, width, height, image):
@@ -119,4 +118,3 @@ class ZoningButton(ActionButton):
 		ActionPanel.active = self
 		ActionPanel.updatePanel()
 		builder.state = builder.ZONE
-		print "ZONING"
