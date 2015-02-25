@@ -53,6 +53,7 @@ grid = GridWithWeights(matrix)
 
 # UNITS
 god = God()
+player = Player(1000)
 
 for i in xrange(1, 10):
 	c = Customer(150, 150, 30, 30, images.customer)
