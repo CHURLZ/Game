@@ -57,10 +57,8 @@ god = God()
 for i in xrange(1, 10):
 	c = Customer(i*60, 150, 30, 30, images.customer)
 
-def spawnTruck():
-	Truck(600, 495, 60, 30, images.truck)
+Truck(600, 495, 60, 30, images.truck)
 
-spawnTruck()
 
 
 panel = ActionPanel(0, 10, 60, 400, images.panel)
@@ -81,10 +79,18 @@ while True:
 	for tile in Terrain.List:
 		tile.motion(god.cameraX, god.cameraY)
 
+
+	for b in Box.List:
+		if b.getCurrentTile() and not b.getCurrentTile().zone == Terrain.DELIVERABLES and not b.awaitingOwner and not b.owner:
+			moveTo = Terrain.getVacantTileInZone(Terrain.DELIVERABLES)
+			if moveTo:
+				b.awaitingOwner = True
+				TaskManager.addTask(Task.MOVE_OBJECT, b.getCurrentTile(), moveTo, b)
+
 	for c in Customer.List:
 		if c.task == None:
-			if not taskManager.isEmpty():
-				c.assignTask(taskManager.takeTask())
+			if not TaskManager.isEmpty():
+				c.assignTask(TaskManager.takeTask())
 		c.motion(god.cameraX, god.cameraY)
 		c.update(grid)
 
@@ -115,10 +121,13 @@ while True:
 	#MISC
 
 	#DRAW
-	screen.fill((255, 255, 255))
-	BaseClass.backgroundSprites.draw(screen)
-	BaseClass.foregroundSprites.draw(screen)
-	GUIBaseClass.allSprites.draw(screen)
+	try:
+		screen.fill((255, 255, 255))
+		BaseClass.backgroundSprites.draw(screen)
+		BaseClass.foregroundSprites.draw(screen)
+		GUIBaseClass.allSprites.draw(screen)
+	except KeyError:
+		print "~error: KeyError, when drawing something :("
 
 	pygame.display.flip()	
 	#DRAW

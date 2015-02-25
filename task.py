@@ -25,7 +25,7 @@ class Task:
 		elif typeOfTask == self.MOVE_OBJECT:
 			self.actions.put(action(self.MOVE_TO, None, intFrom, obj))
 			self.actions.put(action(self.PICK_UP_OBJECT, None, None, obj))
-			self.actions.put(action(self.MOVE_TO, None, intTo, obj))
+			self.actions.put(action(self.MOVE_OBJECT, None, intTo, obj))
 			self.actions.put(action(self.DROP_OBJECT, None, None, obj))
 		elif typeOfTask == self.PICK_UP_OBJECT:
 			self.actions.put(action(self.MOVE_TO, None, intFrom, obj))

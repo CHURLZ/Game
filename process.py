@@ -1,6 +1,7 @@
 import gui, pygame, sys
 from builder import *
 from zone import *
+from classes import Truck
 
 def process(god):
 	for event in pygame.event.get():  
@@ -33,7 +34,7 @@ def process(god):
 			if event.key == pygame.K_3:
 				builder.state = builder.INACTIVE
 			if event.key == pygame.K_4:
-				print 4
+				Truck(600, 495, 60, 30, images.truck)
 			if event.key == pygame.K_ESCAPE:
 				pygame.quit()
 				sys.exit()

@@ -46,10 +46,6 @@ class BaseClass(pygame.sprite.Sprite):
 		self.gridY = y
 		self.width = width
 		self.height = height
-		self.walkX = x + (width / 2)
-		self.walkY = y + height 
-		self.centerX = self.walkX
-		self.centerY = self.rect.y + (height / 2)
 
 	def motion(self, x, y):
 		self.rect.x = self.gridX + x
@@ -72,12 +68,12 @@ class Box(BaseClass):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.BACKGROUND)
 		Box.List.add(self)
 		self.currentTile = self.getCurrentTile()
-		self.currentTile.walkable = False
 		self.owner = None
+		self.awaitingOwner = False
 
 	def getCurrentTile(self):
 		for obj in Terrain.List:
-			if Collision.contains(obj, self.centerX, self.centerY):
+			if Collision.contains(obj, self.rect.x + self.width/2, self.rect.y + self.height/2):
 				return obj
 
 	def update(self):
@@ -92,7 +88,6 @@ class Truck(BaseClass):
 	LOADING = 2
 	UNLOADING = 3
 	WAITING = 4
-	EMPTY = 5
 
 	List = pygame.sprite.Group()
 	def __init__(self, x, y, width, height, image_string):
@@ -134,6 +129,7 @@ class Truck(BaseClass):
 
 		temp = self.cargo.copy()
 		for c in temp:
+			c.update()
 			if c.owner != self:
 				self.cargo.remove(c)
 
@@ -160,7 +156,7 @@ class Truck(BaseClass):
 		if targetXReached:
 			self.state = Truck.UNLOADING
 			for i, c in enumerate(self.cargo):
-				taskManager.addTask(Task.MOVE_OBJECT, self.getCurrentTile(), Terrain.getTileAtGridPos((8 + i, 14)), c)
+				TaskManager.addTask(Task.MOVE_OBJECT, self.getCurrentTile(), Terrain.getVacantTileInZone(Terrain.DELIVERABLES), c)
 			self.xSpeed = 0
 			self.targetSet = False
 
@@ -224,12 +220,32 @@ class Customer(BaseClass):
 			if not self.targetSet:
 				self.setTargetTile(self.currentAction.interactTo, grid)
 			self.navigate()
-		if self.currentAction.actionType == Task.PICK_UP_OBJECT:
+
+		if self.currentAction.actionType == Task.MOVE_OBJECT:
+			while not self.currentAction.interactTo or self.currentAction.interactTo.occupied:
+				self.targetSet = False
+				newTo = Terrain.getVacantTileInZone(Terrain.DELIVERABLES)
+				if not newTo:
+					newTo = Terrain.getTileAtGridPos(((int)(random.random()*15), (int)(random.random()*10)))
+				self.currentAction.interactTo = newTo
+
+			if not self.targetSet:
+				self.setTargetTile(self.currentAction.interactTo, grid)
+			
+			self.navigate()
+
+		elif self.currentAction.actionType == Task.PICK_UP_OBJECT:
 			self.holdingObject = self.currentAction.interactionObject
+			self.holdingObject.getCurrentTile().occupied = False
 			self.currentAction.interactionObject.owner = self
 			self.currentAction.isDone = True
-		if self.currentAction.actionType == Task.DROP_OBJECT:
+
+		elif self.currentAction.actionType == Task.DROP_OBJECT:
+			self.holdingObject.rect.x = self.getCurrentTile().rect.x
+			self.holdingObject.rect.y = self.getCurrentTile().rect.y
+			self.getCurrentTile().occupied = True
 			self.currentAction.interactionObject.owner = None
+			self.currentAction.interactionObject.awaitingOwner = False
 			self.holdingObject = None
 			self.currentAction.isDone = True
 
@@ -241,6 +257,7 @@ class Customer(BaseClass):
 				self.textBubble = TextBox(300, 342, "work", self.currentAction.names[self.currentAction.actionType])
 			else:
 				self.task = None
+				self.targetSet = False
 
 	def getNextTile(self):
 		(x, y) = self.path.pop()
@@ -258,7 +275,7 @@ class Customer(BaseClass):
 
 	def setTargetTile(self, obj, grid):
 		if not obj or not obj.walkable:
-			return
+			return None
 		else:
 			self.targetTile = obj
 
@@ -266,9 +283,11 @@ class Customer(BaseClass):
 			self.path = self.getPath(self.targetTile, grid)
 			if self.path == None:
 				self.targetSet = False
-				return 
+				return None
 
 			self.nextTile = self.getNextTile()
+
+			return True
 
 	def motion(self, x, y):
 		self.gridX += self.xSpeed
@@ -364,12 +383,16 @@ class Customer(BaseClass):
 class Terrain(BaseClass):
 	List = pygame.sprite.Group()
 	zones = []
+	DELIVERABLES = 0
+	GARBAGE = 1
 	def __init__(self, x, y, gridPos, width, height, image_string, walkable, buildable = True, palette=None):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.BACKGROUND)
 		Terrain.List.add(self)
 		self.gridPos = gridPos
 		self.walkable = walkable
 		self.buildable = buildable
+		self.occupied = False
+		self.zone = None
 
 		if palette:
 			self.drawPalette(palette, width, height)
@@ -390,6 +413,18 @@ class Terrain(BaseClass):
 	def getTileAtGridPos(pos):
 		for tile in Terrain.List:
 			if tile.gridPos == pos:
+				return tile
+
+	@staticmethod
+	def getZoneAtGridPos(pos):
+		for tile in Terrain.List:
+			if tile.gridPos == pos:
+				return tile.zone
+
+	@staticmethod
+	def getVacantTileInZone(zone):
+		for tile in Terrain.List:
+			if tile.zone == zone and not tile.occupied:
 				return tile
 
 class BlueFloor(Terrain):

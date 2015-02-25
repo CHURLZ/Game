@@ -1,20 +1,20 @@
 import pygame, Queue
 from task import *
-class taskManager:
+class TaskManager:
 	
 	tasks = Queue.Queue()
 
 	@staticmethod
 	def addTask(taskType, taskFrom, taskTo, taskObj):
 		newTask = Task(taskType, taskFrom, taskTo, taskObj)
-		taskManager.tasks.put(newTask)
-
+		TaskManager.tasks.put(newTask)
+	
 	@staticmethod
 	def takeTask():
-		if not taskManager.isEmpty():	
-			return taskManager.tasks.get(False)
+		if not TaskManager.isEmpty():	
+			return TaskManager.tasks.get(False)
 
 	@staticmethod
 	def isEmpty():
-		return taskManager.tasks.empty()
+		return TaskManager.tasks.empty()
 

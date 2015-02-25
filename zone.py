@@ -24,6 +24,7 @@ class Zone():
 		for tile in tiles:
 			if tile.walkable and self.__inRange(tile.rect, (self.originX, self.originY), (self.endX, self.endY)):
 				self.tiles.append(tile)
+				tile.zone = Terrain.DELIVERABLES
 				tile.image = images.greenFloor
 				tile.default_image = tile.image
 
