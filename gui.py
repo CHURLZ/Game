@@ -1,4 +1,4 @@
-import pygame, images
+import pygame, images, threading
 from sprites import *
 
 BUTTON_WIDTH = 30
@@ -60,10 +60,14 @@ class TextBox(GUIBaseClass):
 		# Draw Text
 		image.blit(text, ((width - textRect.width) / 2, height / 2 - textRect.height - 2, width, height))
 		GUIBaseClass.__init__(self, x, y, width, height, image)
+		self.killIn(2000)
 
 	def update(self, x, y, w, h):
 		self.rect.x = x - w * 3 - 10 
 		self.rect.y = y - (20 + h)
+
+	def killIn(self, ms):
+		threading.Timer(ms/1000, self.kill).start()
 
 
 class ActionPanel(GUIBaseClass):

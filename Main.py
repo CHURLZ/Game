@@ -54,11 +54,14 @@ grid = GridWithWeights(matrix)
 # UNITS
 god = God()
 
-for i in xrange(1, 3):
+for i in xrange(1, 10):
 	c = Customer(i*60, 150, 30, 30, images.customer)
-	c.textBubble = TextBox(300, 342, "smoerblomma", "I am a chunky monkey!")
 
-Truck(600, 495, 60, 30, images.truck)
+def spawnTruck():
+	Truck(600, 495, 60, 30, images.truck)
+
+spawnTruck()
+
 
 panel = ActionPanel(0, 10, 60, 400, images.panel)
 # UNITS

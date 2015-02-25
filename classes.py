@@ -132,8 +132,18 @@ class Truck(BaseClass):
 		else:
 			self.xDir = 0
 
-		for c in self.cargo:
-			c.update()
+		temp = self.cargo.copy()
+		for c in temp:
+			if c.owner != self:
+				self.cargo.remove(c)
+
+		if len(self.cargo) == 0:
+			self.state = Truck.DRIVING
+			self.targetSet = True
+			self.targetX = -100
+
+		if self.state == Truck.DRIVING and self.rect.x <= -100:
+			self.kill()
 
 	def navigate(self):
 		targetXReached = False
@@ -168,13 +178,7 @@ class Customer(BaseClass):
 		#MOTION
 		self.xSpeed, self.ySpeed = 0, 0
 		self.movementSpeed, self.xDir, self.yDir = 3, 1, 1
-
-		#INTERACTION
-		self.targetX, self.targetY = 0, 0
-		self.holdingObject = None
-		self.textBubble = None
 		
-
 		#PATHFINDING
 		self.targetSet = False
 		self.targetTile = None
@@ -186,6 +190,9 @@ class Customer(BaseClass):
 		self.task = None
 		self.currentAction = None
 
+		#INTERACTION
+		self.holdingObject = None
+		self.textBubble = None
 
 		#ANIMATION
 		self.STANDING = 0
@@ -201,14 +208,6 @@ class Customer(BaseClass):
 		self.task = task
 		self.task.owner = self
 		self.currentAction = task.takeAction()
-
-		print ""
-		print "new task: ", self.task.taskType
-		print "from: ", self.task.interactFrom.gridPos
-		print "to: " , self.task.interactTo.gridPos
-		print "obj: ", self.task.interactionObject
-
-		#BELOW ARE TEST
 		self.targetSet = False
 
 	def isBusy(self):
@@ -237,7 +236,8 @@ class Customer(BaseClass):
 		if self.currentAction.isDone:
 			if not self.task.isDone():
 				self.currentAction = self.task.takeAction()
-				self.textBubble.kill()
+				if self.textBubble:
+					self.textBubble.kill()
 				self.textBubble = TextBox(300, 342, "work", self.currentAction.names[self.currentAction.actionType])
 			else:
 				self.task = None
