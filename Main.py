@@ -55,7 +55,7 @@ grid = GridWithWeights(matrix)
 god = God()
 
 for i in xrange(1, 10):
-	c = Customer(150, 150, 30, 30, images.customer)
+	c = Customer(i*60, 150, 30, 30, images.customer)
 	c.textBubble = TextBox(300, 342, "smoerblomma", "I am a chunky monkey!")
 
 Truck(600, 495, 60, 30, images.truck)
@@ -81,8 +81,7 @@ while True:
 	for c in Customer.List:
 		if not c.isBusy:
 			if not taskManager.isEmpty():
-				t = taskManager.takeTask()
-				c.assignTask(t, grid)
+				c.assignTask(taskManager.takeTask(), grid)
 		if not c.targetSet:
 			x = ((int)(random.random() * TILES_WIDTH))
 			y = ((int)(random.random() * TILES_HEIGHT))

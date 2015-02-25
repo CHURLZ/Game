@@ -57,10 +57,8 @@ class TextBox(GUIBaseClass):
 
 		# Draw arrow!
 		image.blit(images.textBoxArrow, (width - (TILE_SIZE * 2), height - (TILE_SIZE * 2) + 7, TILE_SIZE, TILE_SIZE))
-
 		# Draw Text
 		image.blit(text, ((width - textRect.width) / 2, height / 2 - textRect.height - 2, width, height))
-		
 		GUIBaseClass.__init__(self, x, y, width, height, image)
 
 	def update(self, x, y, w, h):

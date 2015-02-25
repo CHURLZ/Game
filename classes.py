@@ -8,6 +8,7 @@ from ai import AI
 from God import *
 from taskManager import *
 from task import *
+from gui import TextBox
 
 TILE_SIZE = 30
 WHITE = (255, 255, 255, 255)
@@ -91,7 +92,7 @@ class Truck(BaseClass):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.FOREGROUND)
 		Truck.List.add(self)
 		self.state = Truck.DRIVING
-		self.cargo = {Box(200, 200, 30, 30, images.boxClosed), Box(300, 200, 30, 30, images.boxClosed)}
+		self.cargo = {Box(0, 200, 30, 30, images.boxClosed), Box(0, 200, 30, 30, images.boxClosed)}
 		self.targetSet = True
 		self.targetX = 200
 		self.xDir = 1
@@ -187,14 +188,24 @@ class Customer(BaseClass):
 		self.sprite_side = img[1]
 		self.sprite_back = img[2]
 		
-
 	def assignTask(self, task, grid):
 		self.isBusy = True
 		self.task = task
 		task.owner = self
 		self.setTargetTile(task.interactFrom, grid)
-		#print "task assigned, going to ", task.interactFrom.gridPos
+
+		self.textBubble.kill()
+		self.textBubble = TextBox(300, 342, "work", "Unloading truck!")
 	
+	def playTask(self):
+		if self.task == None:
+			return
+		if self.task.taskType == self.task.MOVE_OBJECT:
+			self.navigate(self.task)
+		if self.task.isDone:
+			self.task = None
+			print "All Done"
+
 	def getNextTile(self):
 		(x, y) = self.path.pop()
 		for obj in Terrain.List:
@@ -243,15 +254,16 @@ class Customer(BaseClass):
 
 		elif state == self.STANDING:
 			img = self.sprite_front
-
 			if self.yDir == -1 :
 				img = self.sprite_back
 			self.image = img
 
 	def update(self):
 		self.animate(self.state)
-		if(self.targetSet):
-			self.navigate()
+		#if(self.targetSet):
+		#	self.navigate()
+		if self.task != None:
+			self.playTask()
 
 		if self.xSpeed < 0:
 			self.xDir = -1
@@ -273,17 +285,16 @@ class Customer(BaseClass):
 	def getPath(self, goalTile, grid):
 		self.currentTile = self.getCurrentTile()
 		if self.currentTile == None:
-			print "~error: Current tile is none"
+			print "~error: Current tile is None"
 			return
 
 		start = self.currentTile.gridPos
 		goal = goalTile.gridPos
-
 		parents, cost = AI.calculatePath(grid, start, goal)
 
 		return AI.reconstructPath(parents, start, goal)
 
-	def navigate(self):
+	def navigate(self, task):
 		self.state = self.WALKING
 		targetXReached, targetYReached = False, False
 
@@ -309,6 +320,7 @@ class Customer(BaseClass):
 			else:
 				self.state = self.STANDING
 				self.targetSet = False
+				task.isDone = True
 
 class Terrain(BaseClass):
 	List = pygame.sprite.Group()
