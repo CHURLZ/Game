@@ -156,7 +156,7 @@ class Truck(BaseClass):
 		if targetXReached:
 			self.state = Truck.UNLOADING
 			for i, c in enumerate(self.cargo):
-				TaskManager.addTask(Task.MOVE_OBJECT, self.getCurrentTile(), Terrain.getVacantTileInZone(Terrain.DELIVERABLES), c)
+				TaskManager.addTask(Task.MOVE_OBJECT, self.getCurrentTile(), None, c)
 			self.xSpeed = 0
 			self.targetSet = False
 
@@ -226,7 +226,7 @@ class Customer(BaseClass):
 				self.targetSet = False
 				newTo = Terrain.getVacantTileInZone(Terrain.DELIVERABLES)
 				if not newTo:
-					newTo = Terrain.getTileAtGridPos(((int)(random.random()*15), (int)(random.random()*10)))
+					newTo = Terrain.getTileAtGridPos(((int)(random.random()*15), (int)(random.random()*9)))
 				self.currentAction.interactTo = newTo
 
 			if not self.targetSet:
@@ -353,6 +353,9 @@ class Customer(BaseClass):
 		return AI.reconstructPath(parents, start, goal)
 
 	def navigate(self):
+		if not self.nextTile:
+			print "~error in navigate(self): nextTile"
+			return
 		self.state = self.WALKING
 		targetXReached, targetYReached = False, False
 
@@ -423,9 +426,14 @@ class Terrain(BaseClass):
 
 	@staticmethod
 	def getVacantTileInZone(zone):
+		list = []
+		r = None
 		for tile in Terrain.List:
 			if tile.zone == zone and not tile.occupied:
-				return tile
+				list.append(tile)
+		if len(list) > 0: 
+			r = list[(int)(random.random()* len(list))]
+		return r
 
 class BlueFloor(Terrain):
 	def __init__(self, x, y, gridPos):

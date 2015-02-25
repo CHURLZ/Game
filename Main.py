@@ -57,7 +57,7 @@ god = God()
 player = Player(1000)
 
 for i in xrange(1, 10):
-	c = Customer(i*60, 150, 30, 30, images.customer)
+	c = Customer(30 * i, 150, 30, 30, images.customer)
 
 Truck(600, 495, 60, 30, images.truck)
 
