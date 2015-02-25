@@ -54,7 +54,7 @@ grid = GridWithWeights(matrix)
 # UNITS
 god = God()
 
-for i in xrange(1, 10):
+for i in xrange(1, 3):
 	c = Customer(i*60, 150, 30, 30, images.customer)
 	c.textBubble = TextBox(300, 342, "smoerblomma", "I am a chunky monkey!")
 
@@ -79,18 +79,11 @@ while True:
 		tile.motion(god.cameraX, god.cameraY)
 
 	for c in Customer.List:
-		if not c.isBusy:
+		if c.task == None:
 			if not taskManager.isEmpty():
-				c.assignTask(taskManager.takeTask(), grid)
-		if not c.targetSet:
-			x = ((int)(random.random() * TILES_WIDTH))
-			y = ((int)(random.random() * TILES_HEIGHT))
-			obj = Terrain.getTileAtGridPos((x, y))
-			if obj != None and obj.walkable and not c.isBusy:
-				c.setTargetTile(obj, grid)
-
+				c.assignTask(taskManager.takeTask())
 		c.motion(god.cameraX, god.cameraY)
-		c.update()
+		c.update(grid)
 
 	for t in Truck.List:
 		t.motion(god.cameraX, god.cameraY)

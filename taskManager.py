@@ -6,7 +6,7 @@ class taskManager:
 
 	@staticmethod
 	def addTask(taskType, taskFrom, taskTo, taskObj):
-		newTask = task(taskType, taskFrom, taskTo, taskObj)
+		newTask = Task(taskType, taskFrom, taskTo, taskObj)
 		taskManager.tasks.put(newTask)
 
 	@staticmethod
