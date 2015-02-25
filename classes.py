@@ -8,6 +8,7 @@ from ai import AI
 from God import *
 from taskManager import *
 from task import *
+from gui import TextBox
 
 TILE_SIZE = 30
 WHITE = (255, 255, 255, 255)
@@ -72,11 +73,18 @@ class Box(BaseClass):
 		Box.List.add(self)
 		self.currentTile = self.getCurrentTile()
 		self.currentTile.walkable = False
+		self.owner = None
 
 	def getCurrentTile(self):
 		for obj in Terrain.List:
 			if Collision.contains(obj, self.centerX, self.centerY):
 				return obj
+
+	def update(self):
+		if self.owner == None:
+			return
+		self.rect.x = self.owner.rect.x + (self.owner.width / 2) * self.owner.xDir
+		self.rect.y = self.owner.rect.y - 10
 
 class Truck(BaseClass):
 	DRIVING = 0
@@ -91,7 +99,9 @@ class Truck(BaseClass):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.FOREGROUND)
 		Truck.List.add(self)
 		self.state = Truck.DRIVING
-		self.cargo = {Box(200, 200, 30, 30, images.boxClosed), Box(300, 200, 30, 30, images.boxClosed)}
+		self.cargo = {Box(0, 200, 30, 30, images.boxClosed), Box(0, 200, 30, 30, images.boxClosed), Box(0, 200, 30, 30, images.boxClosed), Box(0, 200, 30, 30, images.boxClosed), Box(0, 200, 30, 30, images.boxClosed), Box(0, 200, 30, 30, images.boxClosed)}
+		for c in self.cargo:
+			c.owner = self
 		self.targetSet = True
 		self.targetX = 200
 		self.xDir = 1
@@ -106,7 +116,7 @@ class Truck(BaseClass):
 		self.gridX += self.xSpeed
 
 		if abs(self.xSpeed) > self.maxSpeed:
-			self.xSpeed = self.maxSpeed * self.xDir
+			self.xSpeed = self.maxSpeed * -self.xDir
 
 		self.walkX = self.rect.x + (self.width/2)
 		self.walkY = self.rect.y + self.height
@@ -116,15 +126,24 @@ class Truck(BaseClass):
 			self.navigate()
 
 		if self.xSpeed < 0:
-			self.xDir = -1
-		elif self.xSpeed > 0:
 			self.xDir = 1
+		elif self.xSpeed > 0:
+			self.xDir = -1
 		else:
 			self.xDir = 0
 
-		for c in self.cargo:
-			c.rect.x = self.rect.x + self.width
-			c.rect.y = self.rect.y
+		temp = self.cargo.copy()
+		for c in temp:
+			if c.owner != self:
+				self.cargo.remove(c)
+
+		if len(self.cargo) == 0:
+			self.state = Truck.DRIVING
+			self.targetSet = True
+			self.targetX = -100
+
+		if self.state == Truck.DRIVING and self.rect.x <= -100:
+			self.kill()
 
 	def navigate(self):
 		targetXReached = False
@@ -140,8 +159,8 @@ class Truck(BaseClass):
 
 		if targetXReached:
 			self.state = Truck.UNLOADING
-			for c in self.cargo:
-				taskManager.addTask(task.MOVE_OBJECT, self.getCurrentTile(), Terrain.getTileAtGridPos((50, 100)), c)
+			for i, c in enumerate(self.cargo):
+				taskManager.addTask(Task.MOVE_OBJECT, self.getCurrentTile(), Terrain.getTileAtGridPos((8 + i, 14)), c)
 			self.xSpeed = 0
 			self.targetSet = False
 
@@ -159,13 +178,7 @@ class Customer(BaseClass):
 		#MOTION
 		self.xSpeed, self.ySpeed = 0, 0
 		self.movementSpeed, self.xDir, self.yDir = 3, 1, 1
-
-		#INTERACTION
-		self.targetX, self.targetY = 0, 0
-		self.isHolding = False
-		self.holdingObject = None
-		self.textBubble = None
-
+		
 		#PATHFINDING
 		self.targetSet = False
 		self.targetTile = None
@@ -174,8 +187,12 @@ class Customer(BaseClass):
 		self.path = Queue.Queue()
 
 		#TASKING
-		self.isBusy = False
 		self.task = None
+		self.currentAction = None
+
+		#INTERACTION
+		self.holdingObject = None
+		self.textBubble = None
 
 		#ANIMATION
 		self.STANDING = 0
@@ -187,14 +204,44 @@ class Customer(BaseClass):
 		self.sprite_side = img[1]
 		self.sprite_back = img[2]
 		
-
-	def assignTask(self, task, grid):
-		self.isBusy = True
+	def assignTask(self, task):
 		self.task = task
-		task.owner = self
-		self.setTargetTile(task.interactFrom, grid)
-		#print "task assigned, going to ", task.interactFrom.gridPos
+		self.task.owner = self
+		self.currentAction = task.takeAction()
+		self.targetSet = False
+
+	def isBusy(self):
+		if self.task == None:
+			return False
+		else:		
+			return self.task.actions.empty()
 	
+	def playTask(self, grid):
+		if self.currentAction == None:
+			return
+
+		if self.currentAction.actionType == Task.MOVE_TO:
+			if not self.targetSet:
+				self.setTargetTile(self.currentAction.interactTo, grid)
+			self.navigate()
+		if self.currentAction.actionType == Task.PICK_UP_OBJECT:
+			self.holdingObject = self.currentAction.interactionObject
+			self.currentAction.interactionObject.owner = self
+			self.currentAction.isDone = True
+		if self.currentAction.actionType == Task.DROP_OBJECT:
+			self.currentAction.interactionObject.owner = None
+			self.holdingObject = None
+			self.currentAction.isDone = True
+
+		if self.currentAction.isDone:
+			if not self.task.isDone():
+				self.currentAction = self.task.takeAction()
+				if self.textBubble:
+					self.textBubble.kill()
+				self.textBubble = TextBox(300, 342, "work", self.currentAction.names[self.currentAction.actionType])
+			else:
+				self.task = None
+
 	def getNextTile(self):
 		(x, y) = self.path.pop()
 		for obj in Terrain.List:
@@ -243,15 +290,16 @@ class Customer(BaseClass):
 
 		elif state == self.STANDING:
 			img = self.sprite_front
-
 			if self.yDir == -1 :
 				img = self.sprite_back
 			self.image = img
 
-	def update(self):
+	def update(self, grid):
 		self.animate(self.state)
-		if(self.targetSet):
-			self.navigate()
+		#if(self.targetSet):
+		#	self.navigate()
+		if self.task != None:
+			self.playTask(grid)
 
 		if self.xSpeed < 0:
 			self.xDir = -1
@@ -270,15 +318,17 @@ class Customer(BaseClass):
 		if self.textBubble:
 			self.textBubble.update(self.rect.x, self.rect.y, self.width, self.height)
 
+		if self.holdingObject:
+			self.holdingObject.update()
+
 	def getPath(self, goalTile, grid):
 		self.currentTile = self.getCurrentTile()
 		if self.currentTile == None:
-			print "~error: Current tile is none"
+			print "~error: Current tile is None"
 			return
 
 		start = self.currentTile.gridPos
 		goal = goalTile.gridPos
-
 		parents, cost = AI.calculatePath(grid, start, goal)
 
 		return AI.reconstructPath(parents, start, goal)
@@ -309,6 +359,7 @@ class Customer(BaseClass):
 			else:
 				self.state = self.STANDING
 				self.targetSet = False
+				self.currentAction.isDone = True
 
 class Terrain(BaseClass):
 	List = pygame.sprite.Group()
