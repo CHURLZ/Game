@@ -8,6 +8,7 @@ from process import *
 from God import *
 from zone import *
 from taskManager import *
+from player import *
 
 pygame.init()
 pygame.display.init()
