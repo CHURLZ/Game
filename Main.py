@@ -54,7 +54,6 @@ grid = GridWithWeights(matrix)
 
 # UNITS
 god = God()
-player = Player(1000)
 
 for i in xrange(1, 10):
 	c = Customer(30 * i, 150, 30, 30, images.customer)
@@ -73,6 +72,7 @@ while True:
 	totalFrames += 1
 	process(god)	
 	god.update()
+	panel.updatePanel()
 
 	#LOGIC
 	for zone in Terrain.zones:
@@ -80,7 +80,6 @@ while True:
 
 	for tile in Terrain.List:
 		tile.motion(god.cameraX, god.cameraY)
-
 
 	for b in Box.List:
 		if b.getCurrentTile() and not b.getCurrentTile().zone == Terrain.DELIVERABLES and not b.awaitingOwner and not b.owner:

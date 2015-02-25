@@ -1,8 +1,9 @@
-import pygame, math, Queue, time
+import pygame, math, Queue, time, images
 from zone import *
 from collision import *
 from classes import Terrain
-import images
+from player import *
+from gui import *
 
 class builder:
 	LEFT = "left"
@@ -69,11 +70,20 @@ class builder:
 		if builder.buildTo == None:
 			builder.buildPlan = None
 		if builder.buildPlan != None:
-			for tile in builder.buildPlan:
-				if tile.buildable:
-					tile.image = images.brickHori
-					tile.default_image = tile.image
-					tile.walkable = False
+			print len(builder.buildPlan)
+			if Player.cash >= len(builder.buildPlan) * 100:
+				Player.cash -= len(builder.buildPlan) * 100
+				for tile in builder.buildPlan:
+					if tile.buildable:
+						tile.image = images.brickHori
+						tile.default_image = tile.image
+						tile.walkable = False
+			else:
+				TextBox(x - 110, y - 50, "Low Cash", "Not enough Money!!!!")
+				for tile in builder.buildPlan:
+					if tile.buildable:
+						tile.image = tile.default_image
+						tile.walkable = True
 		builder.initBuild = False
 		builder.builtSinceLastLoop = True
 

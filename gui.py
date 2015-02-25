@@ -1,5 +1,6 @@
 import pygame, images, threading
 from sprites import *
+from player import *
 
 BUTTON_WIDTH = 30
 BUTTON_HEIGHT = 30
@@ -70,19 +71,55 @@ class TextBox(GUIBaseClass):
 		threading.Timer(ms/1000, self.kill).start()
 
 
+class CashBar(GUIBaseClass):
+	lastCash = Player.cash
+	textOffsetX = 30
+	textOffsetY = 7
+	width = 50
+	height = 30
+
+	def __init__(self, x, y):
+		if not pygame.font.get_init():
+			pygame.font.init()
+		# Set up font and textlabel
+		self.font = pygame.font.SysFont(None, 20)
+		text = self.font.render(str(Player.cash), True, (0, 0, 0))
+		textRect = text.get_rect()
+
+		self.image = images.cashBar.copy()
+		imageRect = self.image.get_rect()
+
+		self.image.blit(text, (imageRect.width - (textRect.width + self.textOffsetX), self.textOffsetY, textRect.width, textRect.height))
+
+		GUIBaseClass.__init__(self, x, y, CashBar.width, CashBar.height, self.image)
+
+
+	def update(self):
+		if Player.cash != self.lastCash:
+		 	text = self.font.render(str(Player.cash), True, (0, 0, 0))
+		 	textRect = text.get_rect()
+		 	self.image = images.cashBar.copy()
+		 	imageRect = self.image.get_rect()
+
+		 	self.image.blit(text, (imageRect.width - (textRect.width + self.textOffsetX), self.textOffsetY, textRect.width, textRect.height))
+
+		 	self.lastCash = Player.cash
+
 class ActionPanel(GUIBaseClass):
 	buttons = pygame.sprite.Group()
+	cashBar = CashBar(700, 0)
 	active = None # TO HIGHLIGHT ACTIVE BUTTON
 	def __init__(self, x, y, width, height, image):
 		image = image.convert()
 		image.set_alpha(100)
 		GUIBaseClass.__init__(self, x, y, width, height, image)
-		self.buttons.add(ZoningButton(self.rect.x + 10, self.rect.y + 20, BUTTON_WIDTH, BUTTON_HEIGHT, images.zoneButton))
-		self.buttons.add(WallingButton(self.rect.x + 10, self.rect.y + BUTTON_HEIGHT + 40, BUTTON_WIDTH, BUTTON_HEIGHT, images.wallButton))
+		self.buttons.add(ZoningButton(self.rect.x + 10, self.rect.y + 20, BUTTON_WIDTH, BUTTON_HEIGHT, None))
+		self.buttons.add(WallingButton(self.rect.x + 10, self.rect.y + BUTTON_HEIGHT + 40, BUTTON_WIDTH, BUTTON_HEIGHT, None))
 		active = None
 
 	@staticmethod
 	def updatePanel():
+		ActionPanel.cashBar.update()
 		for button in ActionPanel.buttons:
 			if button == ActionPanel.active and not button.active:
 				button.image.set_alpha(255)
@@ -103,7 +140,7 @@ class ActionButton(ActionPanel):
 
 class WallingButton(ActionButton):
 	def __init__(self, x, y, width, height, image):
-		ActionButton.__init__(self, x, y, width, height, image)
+		ActionButton.__init__(self, x, y, width, height,  images.zoneButton)
 
 	def onClick(self, builder):
 		ActionPanel.active = self
@@ -112,7 +149,7 @@ class WallingButton(ActionButton):
 
 class ZoningButton(ActionButton):
 	def __init__(self, x, y, width, height, image):
-		ActionButton.__init__(self, x, y, width, height, image)
+		ActionButton.__init__(self, x, y, width, height, images.wallButton)
 
 	def onClick(self, builder):
 		ActionPanel.active = self

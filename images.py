@@ -48,6 +48,7 @@ boxClosed = pygame.image.load("img/box_closed.png")
 
 # GUI
 panel = pygame.image.load("img/gui/gui_action_panel.png")
+cashBar = pygame.image.load("img/gui/cashBar.png")
 zoneButton = pygame.image.load("img/gui/zoneButton.png")
 wallButton = pygame.image.load("img/gui/wallButton.png")
 path = pygame.image.load("img/floor/BlueFloorPathTint.png")

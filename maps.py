@@ -131,10 +131,7 @@ class Grid(object):
 			if matrix[y][x - 1] == 0:
 				# print "8"
 				count += 8
-
-		# if (x, y) == (self.width, 0):
-		 	# print matrix[y][x], matrix[y + 1][x], matrix[y - 1][x], matrix[y][x + 1], matrix[y][x - 1], count
-
+				
 		return count
 
 	def in_bounds(self, id):
