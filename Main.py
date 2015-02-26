@@ -28,7 +28,7 @@ else:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), FLAGS, 32)
 clock = pygame.time.Clock()
 pygame.display.set_caption('The Computer Shop Game')
-FPS = 50
+FPS = 60
 fiveSecondinterval = FPS * 5
 totalFrames = 0
 # SETTINGS
@@ -55,14 +55,14 @@ grid = GridWithWeights(matrix)
 # UNITS
 god = God()
 
-for i in xrange(1, 10):
+for i in xrange(1, 11):
 	c = Customer(30 * i, 150, 30, 30, images.customer)
 
 Truck(600, 495, 60, 30, images.truck)
 
 
 
-panel = ActionPanel(0, 10, 60, 400, images.panel)
+#panel = ActionPanel(0, 10, 60, 400, images.panel)
 # UNITS
 
 # print "Startup took: " + str((time.clock() * 1000) - t1)
@@ -72,7 +72,7 @@ while True:
 	totalFrames += 1
 	process(god)	
 	god.update()
-	panel.updatePanel()
+	#panel.updatePanel()
 
 	#LOGIC
 	for zone in Terrain.zones:

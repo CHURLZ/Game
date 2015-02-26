@@ -76,17 +76,11 @@ class Box(BaseClass):
 			if Collision.contains(obj, self.rect.x + self.width/2, self.rect.y + self.height/2):
 				return obj
 
-	def update(self):
-		if self.owner == None:
-			return
-		self.rect.x = self.owner.rect.x + (self.owner.width / 2) * self.owner.xDir
-		self.rect.y = self.owner.rect.y - 10
-
 	def motion(self, x, y):
 		if self.owner:
-			self.gridX = self.owner.rect.x - x
-			self.gridY = self.owner.rect.y - y + 10
-
+			self.gridX = self.owner.rect.x + (self.owner.width / 2) * self.owner.xDir - x
+			self.gridY = self.owner.rect.y - 10 - y 
+		
 		self.rect.x = self.gridX + x
 		self.rect.y = self.gridY + y
 
@@ -197,6 +191,7 @@ class Customer(BaseClass):
 		#INTERACTION
 		self.holdingObject = None
 		self.textBubble = None
+		self.sprite_flip = False
 
 		#ANIMATION
 		self.STANDING = 0
@@ -239,6 +234,7 @@ class Customer(BaseClass):
 
 			if not self.targetSet:
 				self.setTargetTile(self.currentAction.interactTo, grid)
+				self.task.interactTo = self.currentAction.interactTo
 			
 			self.navigate()
 
@@ -249,9 +245,12 @@ class Customer(BaseClass):
 			self.currentAction.isDone = True
 
 		elif self.currentAction.actionType == Task.DROP_OBJECT:
-			self.holdingObject.rect.x = self.getCurrentTile().rect.x
-			self.holdingObject.rect.y = self.getCurrentTile().rect.y
-			self.getCurrentTile().occupied = True
+			self.holdingObject.rect.x = self.task.interactTo.rect.x
+			self.holdingObject.rect.y = self.task.interactTo.rect.y
+			self.holdingObject.gridX = self.task.interactTo.gridX
+			self.holdingObject.gridY = self.task.interactTo.gridY
+			self.holdingObject.getCurrentTile().occupied = True
+
 			self.currentAction.interactionObject.owner = None
 			self.currentAction.interactionObject.awaitingOwner = False
 			self.holdingObject = None
@@ -305,15 +304,26 @@ class Customer(BaseClass):
 		self.rect.y = self.gridY + y
 
 	def animate(self, state):	
-		img = "img/customer/customer_1_front.png"
+		img = self.sprite_front
 
 		if state == self.WALKING:
-			img = self.sprite_side
-			if self.yDir == -1:
-				img = self.sprite_back
+
+			if self.xDir == 0:
+				if self.yDir == -1:
+					img = self.sprite_back
+				if self.yDir == 1:
+					img = self.sprite_front
+
+			if self.yDir == 0:
+				img = self.sprite_side	
+			if self.xDir == -1:
+				self.sprite_flip = False		
+
 			self.image = img
-			if self.xDir == 1:
+
+			if self.xDir == 1 and not self.sprite_flip: 
 				self.image = pygame.transform.flip(self.image, True, False)
+				self.sprite_flip = True
 
 		elif state == self.STANDING:
 			img = self.sprite_front
@@ -322,9 +332,6 @@ class Customer(BaseClass):
 			self.image = img
 
 	def update(self, grid):
-		self.animate(self.state)
-		#if(self.targetSet):
-		#	self.navigate()
 		if self.task != None:
 			self.playTask(grid)
 
@@ -334,7 +341,7 @@ class Customer(BaseClass):
 			self.xDir = 1
 		else:
 			self.xDir = 0
-
+			
 		if self.ySpeed < 0:
 			self.yDir = -1
 		elif self.ySpeed > 0:
@@ -342,11 +349,10 @@ class Customer(BaseClass):
 		else:
 			self.yDir = 0
 
+		self.animate(self.state)
+
 		if self.textBubble:
 			self.textBubble.update(self.rect.x, self.rect.y, self.width, self.height)
-
-		if self.holdingObject:
-			self.holdingObject.update()
 
 	def getPath(self, goalTile, grid):
 		self.currentTile = self.getCurrentTile()
@@ -373,20 +379,26 @@ class Customer(BaseClass):
 			self.xSpeed = -self.movementSpeed
 		else:
 			targetXReached = True
-			self.xSpeed = 0
+			self.rect.x = self.nextTile.rect.x
+			if not self.path or not targetYReached:
+				self.xSpeed = 0
 
-		if self.rect.y < self.nextTile.rect.y - self.width / 2:
+		if self.rect.y < self.nextTile.rect.y - self.width/2:
 			self.ySpeed = self.movementSpeed
-		elif self.rect.y > self.nextTile.rect.y - self.width / 2:
+		elif self.rect.y > self.nextTile.rect.y - self.width/2:
 			self.ySpeed = -self.movementSpeed
 		else:
 			targetYReached = True
-			self.ySpeed = 0
+			self.rect.y = self.nextTile.rect.y - self.width/2
+			if not self.path or not targetXReached:
+				self.ySpeed = 0	
 
 		if targetXReached and targetYReached:
 			if self.path:
 				self.nextTile = self.getNextTile()
 			else:
+				self.ySpeed = 0
+				self.xSpeed = 0
 				self.state = self.STANDING
 				self.targetSet = False
 				self.currentAction.isDone = True
