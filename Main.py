@@ -28,7 +28,7 @@ else:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), FLAGS, 32)
 clock = pygame.time.Clock()
 pygame.display.set_caption('The Computer Shop Game')
-FPS = 60
+FPS = 100
 fiveSecondinterval = FPS * 5
 totalFrames = 0
 # SETTINGS
@@ -83,11 +83,11 @@ while True:
 
 	for b in Box.List:
 		b.motion(god.cameraX, god.cameraY)
-		if b.getCurrentTile() and not b.getCurrentTile().zone == Terrain.DELIVERABLES and not b.awaitingOwner and not b.owner:
+		if b.currentTile and not b.currentTile.zone == Terrain.DELIVERABLES and not b.awaitingOwner and not b.owner:
 			moveTo = Terrain.getVacantTileInZone(Terrain.DELIVERABLES)
 			if moveTo:
 				b.awaitingOwner = True
-				TaskManager.addTask(Task.MOVE_OBJECT, b.getCurrentTile(), moveTo, b)
+				TaskManager.addTask(Task.MOVE_OBJECT, b.currentTile, moveTo, b)
 
 	for c in Customer.List:
 		if c.task == None:
@@ -95,6 +95,8 @@ while True:
 				c.assignTask(TaskManager.takeTask())
 		c.motion(god.cameraX, god.cameraY)
 		c.update(grid)
+		if builder.builtSinceLastLoop:
+			c.setTargetTile(c.targetTile, grid)	
 
 	for t in Truck.List:
 		t.motion(god.cameraX, god.cameraY)
@@ -109,8 +111,7 @@ while True:
 		matrix = grid.update(Terrain.List, god.cameraX, god.cameraY)
 		grid.orientWalls(matrix, Terrain.List, god.cameraX, god.cameraY)
 		builder.builtSinceLastLoop = False
-		for c in Customer.List:
-			c.setTargetTile(c.targetTile, grid)	
+
 	#LOGIC
 
 

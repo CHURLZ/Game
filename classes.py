@@ -67,14 +67,9 @@ class Box(BaseClass):
 	def __init__(self, x, y, width, height, image_string):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.BACKGROUND)
 		Box.List.add(self)
-		self.currentTile = self.getCurrentTile()
+		self.currentTile = None
 		self.owner = None
 		self.awaitingOwner = False
-
-	def getCurrentTile(self):
-		for obj in Terrain.List:
-			if Collision.contains(obj, self.rect.x + self.width/2, self.rect.y + self.height/2):
-				return obj
 
 	def motion(self, x, y):
 		if self.owner:
@@ -83,6 +78,28 @@ class Box(BaseClass):
 		
 		self.rect.x = self.gridX + x
 		self.rect.y = self.gridY + y
+
+	# METHOD FOR SWITCHING OWNER
+	# METHOD FOR PICKING UP
+	def pickUp(self, owner):
+		if self.currentTile:
+			self.currentTile.occupied = False
+		self.currentTile = None
+		self.owner = owner
+		owner.holdingObject = self
+
+
+	# METHOD FOR PUTTING DOWN
+	def putDown(self, owner, tile):
+		self.rect.x = tile.rect.x
+		self.rect.y = tile.rect.y
+		self.gridX = tile.gridX
+		self.gridY = tile.gridY
+		self.currentTile = tile
+		self.currentTile.occupied = True
+		owner.holdingObject = None
+		self.owner = None
+		self.awaitingOwner = False
 
 class Truck(BaseClass):
 	DRIVING = 0
@@ -129,11 +146,7 @@ class Truck(BaseClass):
 		else:
 			self.xDir = 0
 
-		temp = self.cargo.copy()
-		for c in temp:
-			c.update()
-			if c.owner != self:
-				self.cargo.remove(c)
+		self.checkCargo()
 
 		if len(self.cargo) == 0:
 			self.state = Truck.DRIVING
@@ -142,6 +155,15 @@ class Truck(BaseClass):
 
 		if self.state == Truck.DRIVING and self.rect.x <= -100:
 			self.kill()
+
+	def checkCargo(self):
+		if len(self.cargo) == 0:
+			return
+
+		temp = self.cargo.copy()
+		for c in temp:
+			if c.owner != self:
+				self.cargo.remove(c)
 
 	def navigate(self):
 		targetXReached = False
@@ -235,25 +257,14 @@ class Customer(BaseClass):
 			if not self.targetSet:
 				self.setTargetTile(self.currentAction.interactTo, grid)
 				self.task.interactTo = self.currentAction.interactTo
-			
 			self.navigate()
 
 		elif self.currentAction.actionType == Task.PICK_UP_OBJECT:
-			self.holdingObject = self.currentAction.interactionObject
-			self.holdingObject.getCurrentTile().occupied = False
-			self.currentAction.interactionObject.owner = self
+			self.currentAction.interactionObject.pickUp(self)
 			self.currentAction.isDone = True
 
 		elif self.currentAction.actionType == Task.DROP_OBJECT:
-			self.holdingObject.rect.x = self.task.interactTo.rect.x
-			self.holdingObject.rect.y = self.task.interactTo.rect.y
-			self.holdingObject.gridX = self.task.interactTo.gridX
-			self.holdingObject.gridY = self.task.interactTo.gridY
-			self.holdingObject.getCurrentTile().occupied = True
-
-			self.currentAction.interactionObject.owner = None
-			self.currentAction.interactionObject.awaitingOwner = False
-			self.holdingObject = None
+			self.holdingObject.putDown(self, self.task.interactTo)
 			self.currentAction.isDone = True
 
 		if self.currentAction.isDone:
@@ -406,8 +417,10 @@ class Customer(BaseClass):
 class Terrain(BaseClass):
 	List = pygame.sprite.Group()
 	zones = []
+
 	DELIVERABLES = 0
 	GARBAGE = 1
+	
 	def __init__(self, x, y, gridPos, width, height, image_string, walkable, buildable = True, palette=None):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.BACKGROUND)
 		Terrain.List.add(self)
