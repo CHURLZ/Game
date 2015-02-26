@@ -82,6 +82,7 @@ while True:
 		tile.motion(god.cameraX, god.cameraY)
 
 	for b in Box.List:
+		b.motion(god.cameraX, god.cameraY)
 		if b.getCurrentTile() and not b.getCurrentTile().zone == Terrain.DELIVERABLES and not b.awaitingOwner and not b.owner:
 			moveTo = Terrain.getVacantTileInZone(Terrain.DELIVERABLES)
 			if moveTo:

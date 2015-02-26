@@ -82,6 +82,14 @@ class Box(BaseClass):
 		self.rect.x = self.owner.rect.x + (self.owner.width / 2) * self.owner.xDir
 		self.rect.y = self.owner.rect.y - 10
 
+	def motion(self, x, y):
+		if self.owner:
+			self.gridX = self.owner.rect.x - x
+			self.gridY = self.owner.rect.y - y + 10
+
+		self.rect.x = self.gridX + x
+		self.rect.y = self.gridY + y
+
 class Truck(BaseClass):
 	DRIVING = 0
 	ARRIVED = 1
