@@ -5,8 +5,8 @@ class TaskManager:
 	tasks = Queue.Queue()
 
 	@staticmethod
-	def addTask(taskType, taskFrom, taskTo, taskObj):
-		newTask = Task(taskType, taskFrom, taskTo, taskObj)
+	def addTask(taskType, taskFrom, taskTo, taskObj, taskZone):
+		newTask = Task(taskType, taskFrom, taskTo, taskObj, taskZone)
 		TaskManager.tasks.put(newTask)
 	
 	@staticmethod

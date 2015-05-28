@@ -46,6 +46,7 @@ class BaseClass(pygame.sprite.Sprite):
 		self.gridY = y
 		self.width = width
 		self.height = height
+		self.mustUpdate = True
 
 	def motion(self, x, y):
 		self.rect.x = self.gridX + x
@@ -70,6 +71,10 @@ class Box(BaseClass):
 		self.currentTile = None
 		self.owner = None
 		self.awaitingOwner = False
+		self.mustUpdate = True
+		self.contain = {Book(self.rect.x, self.rect.y, 30, 30, images.book),Book(self.rect.x, self.rect.y, 30, 30, images.book),Book(self.rect.x, self.rect.y, 30, 30, images.book)}
+		for c in self.contain:
+			c.owner = self
 
 	def motion(self, x, y):
 		if self.owner:
@@ -78,6 +83,7 @@ class Box(BaseClass):
 		
 		self.rect.x = self.gridX + x
 		self.rect.y = self.gridY + y
+		self.checkContain()
 
 	# METHOD FOR SWITCHING OWNER
 	# METHOD FOR PICKING UP
@@ -87,6 +93,17 @@ class Box(BaseClass):
 		self.currentTile = None
 		self.owner = owner
 		owner.holdingObject = self
+		self.mustUpdate = True
+
+	def checkContain(self):
+		if len(self.contain) == 0:
+			self.image = images.boxEmpty
+			return
+
+		temp = self.contain.copy()			
+		for c in temp:
+			if c.owner != self:
+				self.contain.remove(c)
 
 
 	# METHOD FOR PUTTING DOWN
@@ -100,6 +117,55 @@ class Box(BaseClass):
 		owner.holdingObject = None
 		self.owner = None
 		self.awaitingOwner = False
+		self.mustUpdate = False
+		if self.currentTile.zone == Terrain.DELIVERABLES:
+			self.image = images.boxOpen
+			#for c in self.contain:
+			#	TaskManager.addTask(Task.MOVE_OBJECT, self.currentTile, None, c, None)
+
+class Book(BaseClass):
+	List = pygame.sprite.Group()
+	def __init__(self, x, y, width, height, image_string):
+		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.FOREGROUND)
+		Book.List.add(self)
+		self.currentTile = None
+		self.owner = None
+		self.awaitingOwner = False
+		self.mustUpdate = True
+		self.image = images.blank
+
+	def motion(self, x, y):
+		if self.owner:
+			self.gridX = self.owner.rect.x + (self.owner.width / 2) - x
+			self.gridY = self.owner.rect.y - 10 - y 
+		
+		self.rect.x = self.gridX + x
+		self.rect.y = self.gridY + y
+
+	# METHOD FOR SWITCHING OWNER
+	# METHOD FOR PICKING UP
+	def pickUp(self, owner):
+		if self.currentTile:
+			self.currentTile.occupied = False
+		self.currentTile = None
+		self.owner = owner
+		owner.holdingObject = self
+		self.mustUpdate = True
+		self.image = images.book
+
+
+	# METHOD FOR PUTTING DOWN
+	def putDown(self, owner, tile):
+		self.rect.x = tile.rect.x
+		self.rect.y = tile.rect.y
+		self.gridX = tile.gridX
+		self.gridY = tile.gridY
+		self.currentTile = tile
+		self.currentTile.occupied = True
+		owner.holdingObject = None
+		self.owner = None
+		self.awaitingOwner = False
+		self.mustUpdate = False
 
 class Truck(BaseClass):
 	DRIVING = 0
@@ -107,6 +173,9 @@ class Truck(BaseClass):
 	LOADING = 2
 	UNLOADING = 3
 	WAITING = 4
+
+	parkingX = 0
+	trucksInLine = 0
 
 	List = pygame.sprite.Group()
 	def __init__(self, x, y, width, height, image_string):
@@ -117,7 +186,13 @@ class Truck(BaseClass):
 		for c in self.cargo:
 			c.owner = self
 		self.targetSet = True
-		self.targetX = 200
+		self.targetX = 200 + (100 * Truck.trucksInLine) 
+		Truck.trucksInLine += 1
+		for t in Truck.List:  
+			if t.targetX >= self.targetX and t != self:
+				self.targetX = t.targetX + 100 
+
+		self.targetX 
 		self.xDir = 1
 		self.xSpeed, self.ySpeed, self.acceleration = 0, 0, 1
 		self.movementSpeed, self.maxSpeed = 2, 5
@@ -154,6 +229,7 @@ class Truck(BaseClass):
 			self.targetX = -100
 
 		if self.state == Truck.DRIVING and self.rect.x <= -100:
+			Truck.trucksInLine -= 1
 			self.kill()
 
 	def checkCargo(self):
@@ -180,7 +256,7 @@ class Truck(BaseClass):
 		if targetXReached:
 			self.state = Truck.UNLOADING
 			for i, c in enumerate(self.cargo):
-				TaskManager.addTask(Task.MOVE_OBJECT, self.getCurrentTile(), None, c)
+				TaskManager.addTask(Task.MOVE_OBJECT, self.getCurrentTile(), None, c, Terrain.DELIVERABLES)
 			self.xSpeed = 0
 			self.targetSet = False
 
@@ -220,7 +296,8 @@ class Customer(BaseClass):
 		self.WALKING = 1
 		self.state = self.STANDING
 
-		img = sprite.getSpriteSheet(images.employee_1, (0,0,30,30), 3)
+		imgs = [images.employee_1, images.employee_2, images.employee_3]
+		img = sprite.getSpriteSheet(imgs[(int)(random.random()*len(imgs))], (0,0,30,30), 3)
 		self.sprite_front = img[0]
 		self.sprite_side = img[1]
 		self.sprite_back = img[2]
@@ -247,7 +324,7 @@ class Customer(BaseClass):
 			self.navigate()
 
 		if self.currentAction.actionType == Task.MOVE_OBJECT:
-			while not self.currentAction.interactTo or self.currentAction.interactTo.occupied:
+			while not self.currentAction.interactTo or self.currentAction.interactTo.occupied or not self.currentAction.interactTo.walkable:
 				self.targetSet = False
 				newTo = Terrain.getVacantTileInZone(Terrain.DELIVERABLES)
 				if not newTo:
@@ -375,6 +452,7 @@ class Customer(BaseClass):
 		goal = goalTile.gridPos
 		parents, cost = AI.calculatePath(grid, start, goal)
 
+
 		return AI.reconstructPath(parents, start, goal)
 
 	def navigate(self):
@@ -420,6 +498,8 @@ class Terrain(BaseClass):
 
 	DELIVERABLES = 0
 	GARBAGE = 1
+
+	vacantTiles = {DELIVERABLES : [], GARBAGE : []}
 	
 	def __init__(self, x, y, gridPos, width, height, image_string, walkable, buildable = True, palette=None):
 		BaseClass.__init__(self, x, y, width, height, image_string, BaseClass.BACKGROUND)
@@ -459,14 +539,20 @@ class Terrain(BaseClass):
 
 	@staticmethod
 	def getVacantTileInZone(zone):
-		list = []
-		r = None
-		for tile in Terrain.List:
-			if tile.zone == zone and not tile.occupied:
-				list.append(tile)
-		if len(list) > 0: 
+		list = Terrain.vacantTiles[Terrain.DELIVERABLES]
+		if list:
 			r = list[(int)(random.random()* len(list))]
-		return r
+			Terrain.setVacantTilesInZone(Terrain.DELIVERABLES, list)
+			return r
+		return None
+
+	@staticmethod
+	def setVacantTilesInZone(zone, list):
+		newList = []
+		for tile in list:
+			if tile.zone == zone and not tile.occupied:
+				newList.append(tile)
+		Terrain.vacantTiles[zone] = newList
 
 class BlueFloor(Terrain):
 	def __init__(self, x, y, gridPos):

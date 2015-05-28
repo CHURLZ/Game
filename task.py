@@ -13,7 +13,7 @@ class Task:
 	interactTo = None
 	interactionObject = None
 
-	def __init__(self, typeOfTask, intFrom, intTo, obj):
+	def __init__(self, typeOfTask, intFrom, intTo, obj, zone):
 		self.actions = Queue.Queue()
 		self.taskType = typeOfTask
 		self.interactFrom = intFrom
@@ -21,17 +21,17 @@ class Task:
 		self.interactionObject = obj
 
 		if typeOfTask == self.MOVE_TO:
-			self.actions.put(action(self.MOVE_TO, None, intTo, obj))
+			self.actions.put(action(self.MOVE_TO, None, intTo, obj, zone))
 		elif typeOfTask == self.MOVE_OBJECT:
-			self.actions.put(action(self.MOVE_TO, None, intFrom, obj))
-			self.actions.put(action(self.PICK_UP_OBJECT, None, None, obj))
-			self.actions.put(action(self.MOVE_OBJECT, None, intTo, obj))
-			self.actions.put(action(self.DROP_OBJECT, None, None, obj))
+			self.actions.put(action(self.MOVE_TO, None, intFrom, obj, zone))
+			self.actions.put(action(self.PICK_UP_OBJECT, None, None, obj, None))
+			self.actions.put(action(self.MOVE_OBJECT, None, intTo, obj, None))
+			self.actions.put(action(self.DROP_OBJECT, None, None, obj, None))
 		elif typeOfTask == self.PICK_UP_OBJECT:
-			self.actions.put(action(self.MOVE_TO, None, intFrom, obj))
-			self.actions.put(action(self.PICK_UP_OBJECT, None, None, obj))
+			self.actions.put(action(self.MOVE_TO, None, intFrom, obj, None))
+			self.actions.put(action(self.PICK_UP_OBJECT, None, None, obj, None))
 		elif typeOfTask == self.DROP_OBJECT:
-			self.actions.put(action(self.DROP_OBJECT, None, None, obj))
+			self.actions.put(action(self.DROP_OBJECT, None, None, obj, zone))
 
 	def takeAction(self):
 		if not self.actions.empty():

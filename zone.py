@@ -19,6 +19,7 @@ class Zone():
 		self.setMatrixCoords(endPos)
 		self.setTiles(tiles)
 		self.inLimbo = False
+		Terrain.setVacantTilesInZone(Terrain.DELIVERABLES, tiles)
 
 	def setTiles(self, tiles):
 		for tile in tiles:

@@ -12,10 +12,12 @@ class action:
 	interactFrom = None
 	interactTo = None
 	interactionObject = None
+	interactZone = None
 	isDone = False
 
-	def __init__(self, typeOfTask, intFrom, intTo, obj):
+	def __init__(self, typeOfTask, intFrom, intTo, obj, zone):
 		self.actionType = typeOfTask
 		self.interactFrom = intFrom
 		self.interactTo = intTo
 		self.interactionObject = obj
+		self.interactZone = zone

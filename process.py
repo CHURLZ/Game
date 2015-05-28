@@ -37,7 +37,7 @@ def process(god):
 			if event.key == pygame.K_4:
 				Truck(600, 495, 60, 30, images.truck)
 			if event.key == pygame.K_5:
-				Player.cash += 123
+				Player.cash += 1230
 			if event.key == pygame.K_ESCAPE:
 				pygame.quit()
 				sys.exit()

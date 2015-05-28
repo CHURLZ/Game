@@ -1,5 +1,5 @@
 from store import *
 
 class Player():
-	cash = 200
+	cash = 2000
 	store = Store()

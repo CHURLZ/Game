@@ -14,6 +14,8 @@ class God():
 	key_d = False
 	key_LSHIFT = False
 
+	movedSinceLastLoop = True
+
 	def __init__(self):
 		print "allahu akbar"
 
@@ -37,6 +39,10 @@ class God():
 		else:
 			self.cameraSpeedX = 0
 
+		if(self.cameraSpeedX == 0 or self.cameraSpeedY == 0):
+			movedSinceLastLoop = False
+		else:
+			movedSinceLastLoop = True
 
 		self.cameraX += self.cameraSpeedX
 		self.cameraY += self.cameraSpeedY

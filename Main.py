@@ -10,8 +10,9 @@ from zone import *
 from taskManager import *
 from player import *
 
-pygame.init()
 pygame.display.init()
+pygame.init()
+
 
 t1 = time.clock() * 1000
 # SETTINGS
@@ -55,8 +56,8 @@ grid = GridWithWeights(matrix)
 # UNITS
 god = God()
 
-for i in xrange(1, 11):
-	c = Customer(30 * i, 150, 30, 30, images.customer)
+for i in xrange(1, 20):
+	c = Customer(TILE_SIZE * i, 150, 30, 30, images.customer)
 
 Truck(600, 495, 60, 30, images.truck)
 
@@ -81,16 +82,22 @@ while True:
 	for tile in Terrain.List:
 		tile.motion(god.cameraX, god.cameraY)
 
+	for b in Book.List:
+		if b.mustUpdate or god.movedSinceLastLoop:
+			b.motion(god.cameraX, god.cameraY)
+
 	for b in Box.List:
-		b.motion(god.cameraX, god.cameraY)
-		if b.currentTile and not b.currentTile.zone == Terrain.DELIVERABLES and not b.awaitingOwner and not b.owner:
-			moveTo = Terrain.getVacantTileInZone(Terrain.DELIVERABLES)
-			if moveTo:
-				b.awaitingOwner = True
-				TaskManager.addTask(Task.MOVE_OBJECT, b.currentTile, moveTo, b)
+		if b.mustUpdate or god.movedSinceLastLoop:
+			b.motion(god.cameraX, god.cameraY)
+		if Terrain.vacantTiles[Terrain.DELIVERABLES] > 0:
+			if b.currentTile and not b.currentTile.zone == Terrain.DELIVERABLES and not b.awaitingOwner and not b.owner:
+				moveTo = Terrain.getVacantTileInZone(Terrain.DELIVERABLES)
+				if moveTo:
+					b.awaitingOwner = True
+					TaskManager.addTask(Task.MOVE_OBJECT, b.currentTile, moveTo, b, Terrain.DELIVERABLES)
 
 	for c in Customer.List:
-		if c.task == None:
+		if not c.task:
 			if not TaskManager.isEmpty():
 				c.assignTask(TaskManager.takeTask())
 		c.motion(god.cameraX, god.cameraY)
@@ -132,9 +139,11 @@ while True:
 	except KeyError:
 		print "~error: KeyError, when drawing something :("
 
-	pygame.display.flip()	
+	pygame.display.update()	
 	#DRAW
 
 	#LOGIC
 	clock.tick(FPS)
+	if totalFrames % 5 == 0:
+		print clock.get_fps()
 	#LOGIC

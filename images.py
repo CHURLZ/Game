@@ -38,14 +38,19 @@ sidewalk = pygame.image.load("img/road/sidewalk.png")
 
 # People
 customer = pygame.image.load("img/customer/customer_1_front.png")
-employee_1 = pygame.image.load("img/customer/sprite_employee_1.png")
+employee_1 = pygame.image.load("img/customer/sprite_employee_2.png")
+employee_2 = pygame.image.load("img/customer/sprite_employee_3.png")
+employee_3 = pygame.image.load("img/customer/sprite_employee_4.png")
 
 # Truck
 truck = pygame.image.load("img/truck.png")
 
 # MISC
 boxClosed = pygame.image.load("img/box_closed.png")
-
+boxOpen = pygame.image.load("img/box_open.png")
+boxEmpty = pygame.image.load("img/box_empty.png")
+book = pygame.image.load("img/book.png")
+blank = pygame.image.load("img/blank.png")
 # GUI
 panel = pygame.image.load("img/gui/gui_action_panel.png")
 cashBar = pygame.image.load("img/gui/cashBar.png")
